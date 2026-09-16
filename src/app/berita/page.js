@@ -1,3 +1,6 @@
+'use client'
+
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -59,7 +62,15 @@ const WARNA_KATEGORI = {
   'SOSIAL':       'bg-rose-500 text-white',
 }
 
+const KATEGORI_LIST = ['Semua', 'Berita', 'Kegiatan', 'Pengumuman', 'Sosial']
+
 export default function BeritaPage() {
+  const [filterAktif, setFilterAktif] = useState('Semua')
+
+  const beritaTampil = filterAktif === 'Semua'
+    ? SEMUA_BERITA
+    : SEMUA_BERITA.filter(b => b.kategori === filterAktif.toUpperCase())
+
   return (
     <div className="min-h-screen bg-gray-50">
 
@@ -78,49 +89,60 @@ export default function BeritaPage() {
       {/* ── FILTER KATEGORI ── */}
       <div className="bg-white border-b border-gray-100 px-6 py-4 sticky top-0 z-10 shadow-sm">
         <div className="max-w-6xl mx-auto flex gap-3 flex-wrap">
-          {['Semua', 'Berita', 'Kegiatan', 'Pengumuman', 'Sosial'].map(k => (
-            <span key={k}
-              className="px-4 py-1.5 rounded-full text-sm font-medium border border-gray-200 text-gray-600 hover:border-[#0d3d2b] hover:text-[#0d3d2b] cursor-pointer transition-colors first:bg-[#0d3d2b] first:text-white first:border-[#0d3d2b]">
+          {KATEGORI_LIST.map(k => (
+            <button
+              key={k}
+              onClick={() => setFilterAktif(k)}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-colors cursor-pointer ${
+                filterAktif === k
+                  ? 'bg-[#0d3d2b] text-white border-[#0d3d2b]'
+                  : 'border-gray-200 text-gray-600 hover:border-[#0d3d2b] hover:text-[#0d3d2b]'
+              }`}
+            >
               {k}
-            </span>
+            </button>
           ))}
         </div>
       </div>
 
       {/* ── LIST BERITA ── */}
       <div className="max-w-6xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {SEMUA_BERITA.map(b => (
-            <div key={b.id}
-              className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md hover:border-[#c9a84c]/30 transition-all group cursor-pointer">
-              {/* Gambar */}
-              <div className="relative h-48 overflow-hidden">
-                <Image src={b.img} alt={b.judul} fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute top-3 left-3">
-                  <span className={`text-xs font-bold px-3 py-1 rounded-full ${WARNA_KATEGORI[b.kategori] || 'bg-gray-600 text-white'}`}>
-                    {b.kategori}
-                  </span>
+        {beritaTampil.length === 0 ? (
+          <p className="text-center text-gray-400 py-12">Belum ada berita di kategori ini.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {beritaTampil.map(b => (
+              <div key={b.id}
+                className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md hover:border-[#c9a84c]/30 transition-all group cursor-pointer">
+                {/* Gambar */}
+                <div className="relative h-48 overflow-hidden">
+                  <Image src={b.img} alt={b.judul} fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute top-3 left-3">
+                    <span className={`text-xs font-bold px-3 py-1 rounded-full ${WARNA_KATEGORI[b.kategori] || 'bg-gray-600 text-white'}`}>
+                      {b.kategori}
+                    </span>
+                  </div>
+                </div>
+                {/* Konten */}
+                <div className="p-5">
+                  <p className="text-gray-400 text-xs mb-2">{b.tanggal}</p>
+                  <h3 className="text-[#0d3d2b] font-bold text-base leading-snug mb-2 line-clamp-2">
+                    {b.judul}
+                  </h3>
+                  <p className="text-gray-500 text-sm leading-relaxed line-clamp-3">
+                    {b.ringkasan}
+                  </p>
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <span className="text-[#c9a84c] text-sm font-semibold hover:underline">
+                      Baca selengkapnya →
+                    </span>
+                  </div>
                 </div>
               </div>
-              {/* Konten */}
-              <div className="p-5">
-                <p className="text-gray-400 text-xs mb-2">{b.tanggal}</p>
-                <h3 className="text-[#0d3d2b] font-bold text-base leading-snug mb-2 line-clamp-2">
-                  {b.judul}
-                </h3>
-                <p className="text-gray-500 text-sm leading-relaxed line-clamp-3">
-                  {b.ringkasan}
-                </p>
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <span className="text-[#c9a84c] text-sm font-semibold hover:underline">
-                    Baca selengkapnya →
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* ── FOOTER MINI ── */}
