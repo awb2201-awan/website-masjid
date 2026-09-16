@@ -23,7 +23,7 @@ function Navbar({ onDonasi }) {
   }, [])
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#0d3d2b]/95 backdrop-blur shadow-lg' : 'bg-transparent'}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#0d3d2b]/95 backdrop-blur shadow-lg' : 'bg-[#0d3d2b]/40 backdrop-blur-md'}`}>
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Image src="/logo.png" alt="Logo Masjid Lathifah" width={44} height={44} className="rounded-full" />
@@ -35,7 +35,7 @@ function Navbar({ onDonasi }) {
         <div className="hidden md:flex items-center gap-8">
           {['Beranda','Jadwal','Tentang','Layanan','Berita','Galeri'].map(m => (
             <a key={m} href={`#${m.toLowerCase()}`}
-               className="text-white/80 hover:text-[#c9a84c] text-sm font-medium transition-colors">
+               className="text-white/80 hover:text-[#c9a84c] text-lg font-medium transition-colors">
               {m}
             </a>
           ))}
@@ -57,7 +57,6 @@ function SectionJadwal() {
   const [status, setStatus] = useState('loading') // loading | ok | denied | error
   const [nextInfo, setNextInfo] = useState(null)
 
-  // Jam & tanggal realtime
   useEffect(() => {
     const tick = () => {
       const now = new Date()
@@ -69,7 +68,6 @@ function SectionJadwal() {
     return () => clearInterval(id)
   }, [])
 
-  // Ambil lokasi + jadwal sholat dari aladhan.com
   useEffect(() => {
     if (!navigator.geolocation) {
       setStatus('denied')
@@ -102,7 +100,6 @@ function SectionJadwal() {
     )
   }, [])
 
-  // Hitung sholat berikutnya + countdown
   useEffect(() => {
     const sumber = timings || Object.fromEntries(JADWAL_FALLBACK.map(j => [j.nama, j.waktu.replace('.', ':')]))
     const urutan = ['Subuh', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya']
@@ -381,7 +378,8 @@ export default function Home() {
       {/* ── HERO ── */}
       <section id="beranda" className="relative min-h-screen flex items-center">
         <Image src="/hero-bg.jpg" alt="Masjid Lathifah" fill className="object-cover object-center" priority />
-        <div className="absolute inset-0 bg-[#0d3d2b]/65" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0d3d2b]/95 via-[#0d3d2b]/70 to-[#0d3d2b]/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d3d2b]/90 via-transparent to-transparent" />
         <div className="relative z-10 max-w-6xl mx-auto px-6 w-full pt-24 pb-16">
           <div className="max-w-2xl">
             <p className="text-[#c9a84c] text-sm tracking-widest uppercase mb-3">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
