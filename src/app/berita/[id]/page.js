@@ -1,0 +1,66 @@
+import Image from 'next/image'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import SEMUA_BERITA from '@/data/berita.json'
+
+const WARNA_KATEGORI = {
+  'BERITA':     'bg-[#0d3d2b] text-white',
+  'KEGIATAN':   'bg-[#c9a84c] text-white',
+  'PENGUMUMAN': 'bg-blue-600 text-white',
+  'SOSIAL':     'bg-rose-500 text-white',
+}
+
+export default async function DetailBeritaPage({ params }) {
+  const { id } = await params
+  const berita = SEMUA_BERITA.find(b => String(b.id) === id)
+  if (!berita) return notFound()
+
+  const paragraf = (berita.isi || berita.ringkasan).split('\n\n')
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+
+      {/* ── HEADER ── */}
+      <div className="bg-[#0d3d2b] pt-24 pb-10 px-6">
+        <div className="max-w-3xl mx-auto">
+          <Link href="/berita" className="text-[#c9a84c] text-sm hover:underline mb-4 inline-block">
+            ← Kembali ke Berita
+          </Link>
+          <span className={`text-xs font-bold px-3 py-1 rounded-full inline-block mb-4 ${WARNA_KATEGORI[berita.kategori] || 'bg-gray-600 text-white'}`}>
+            {berita.kategori}
+          </span>
+          <h1 className="text-white text-3xl md:text-4xl font-bold leading-tight">{berita.judul}</h1>
+          <p className="text-white/50 text-sm mt-3">{berita.tanggal}</p>
+        </div>
+      </div>
+
+      {/* ── GAMBAR ── */}
+      <div className="max-w-3xl mx-auto px-6 -mt-6">
+        <div className="relative h-64 md:h-96 rounded-2xl overflow-hidden shadow-lg">
+          <Image src={berita.img} alt={berita.judul} fill className="object-cover" />
+        </div>
+      </div>
+
+      {/* ── ISI ── */}
+      <div className="max-w-3xl mx-auto px-6 py-10">
+        <div className="prose max-w-none">
+          {paragraf.map((p, i) => (
+            <p key={i} className="text-gray-600 leading-relaxed mb-4">{p}</p>
+          ))}
+        </div>
+
+        <div className="mt-10 pt-6 border-t border-gray-100">
+          <Link href="/berita" className="text-[#0d3d2b] text-sm font-semibold hover:text-[#c9a84c] transition-colors">
+            ← Semua Berita
+          </Link>
+        </div>
+      </div>
+
+      {/* ── FOOTER MINI ── */}
+      <div className="bg-[#0d3d2b] py-6 px-6 text-center">
+        <p className="text-white/30 text-xs">© 2026 DKM Masjid Lathifah</p>
+      </div>
+
+    </div>
+  )
+}

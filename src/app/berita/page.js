@@ -62,8 +62,8 @@ export default function BeritaPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {beritaTampil.map(b => (
-              <div key={b.id}
-                className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md hover:border-[#c9a84c]/30 transition-all group cursor-pointer">
+              <Link key={b.id} href={`/berita/${b.id}`}
+                className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md hover:border-[#c9a84c]/30 transition-all group cursor-pointer block">
                 {/* Gambar */}
                 <div className="relative h-48 overflow-hidden">
                   <Image src={b.img} alt={b.judul} fill
@@ -89,7 +89,7 @@ export default function BeritaPage() {
                     </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
