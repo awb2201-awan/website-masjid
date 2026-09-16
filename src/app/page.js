@@ -1,93 +1,17 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-
-const JADWAL = [
-  { nama: 'Subuh',   waktu: '04.28' },
-  { nama: 'Dzuhur',  waktu: '11.54' },
-  { nama: 'Ashar',   waktu: '15.12' },
-  { nama: 'Maghrib', waktu: '17.52' },
-  { nama: 'Isya',    waktu: '19.04' },
-]
+import JADWAL from '@/data/jadwal.json'
+import MITRA from '@/data/mitra.json'
+import MIMBAR_JUMAT from '@/data/mimbar-jumat.json'
+import PENGURUS from '@/data/pengurus.json'
+import BERITA_ALL from '@/data/berita.json'
 
 const LAYANAN = [
   { icon: '🕌', judul: 'Sholat Berjamaah',  desc: 'Lima waktu setiap hari, terbuka untuk seluruh jamaah.' },
   { icon: '📖', judul: 'Kajian & Pengajian', desc: 'Rutin setiap pekan, berbagai tema ilmu agama.' },
   { icon: '👶', judul: 'TPA / TPQ',          desc: 'Bimbingan Al-Qur\'an untuk anak-anak di lingkungan masjid.' },
   { icon: '❤️', judul: 'Sosial & Zakat',     desc: 'Pengelolaan zakat, infaq, sedekah, dan santunan dhuafa.' },
-]
-
-const BERITA = [
-  {
-    id: 1,
-    featured: true,
-    kategori: 'BERITA',
-    judul: 'Renovasi Selesai, Masjid Lathifah Kini Tampil Lebih Megah dan Nyaman',
-    ringkasan: 'Setelah melalui proses renovasi selama beberapa bulan, Masjid Lathifah kini hadir dengan wajah baru yang lebih megah dan nyaman untuk seluruh jamaah.',
-    img: '/masjid-2.jpg',
-  },
-  {
-    id: 2,
-    featured: false,
-    kategori: 'KEGIATAN',
-    judul: 'Kajian Rutin Pekan Ini: Memahami Makna Sabar dalam Kehidupan',
-    img: '/masjid-3.jpg',
-  },
-  {
-    id: 3,
-    featured: false,
-    kategori: 'PENGUMUMAN',
-    judul: 'Jadwal Imam dan Khatib Sholat Jumat Bulan Ini',
-    img: '/hero-bg.jpg',
-  },
-  {
-    id: 4,
-    featured: false,
-    kategori: 'SOSIAL',
-    judul: 'Santunan Anak Yatim: Terkumpul Rp 12 Juta dari Jamaah',
-    img: '/masjid-2.jpg',
-  },
-]
-
-const MITRA = [
-  { nama: 'RT 01', inisial: 'RT01' },
-  { nama: 'RT 02', inisial: 'RT02' },
-  { nama: 'RT 03', inisial: 'RT03' },
-  { nama: 'Kelurahan', inisial: 'KEL' },
-  { nama: 'Puskesmas', inisial: 'PKM' },
-  { nama: 'BMT Sejahtera', inisial: 'BMT' },
-  { nama: 'Madrasah Al-Hikmah', inisial: 'MDR' },
-  { nama: 'BAZNAS', inisial: 'BZN' },
-]
-
-// ── DATA BARU: MIMBAR JUMAT ──
-const MIMBAR_JUMAT = [
-  {
-    tanggal: '19 September 2026',
-    khatib: 'Ustadz Ahmad Fauzi',
-    judul: 'Menjaga Ukhuwah di Tengah Perbedaan',
-    ringkasan: 'Khutbah membahas pentingnya menjaga persaudaraan sesama muslim meski berbeda pandangan, serta adab menyikapi perbedaan dengan akhlak yang baik.',
-  },
-  {
-    tanggal: '12 September 2026',
-    khatib: 'Ustadz Muhammad Ridwan',
-    judul: 'Syukur sebagai Kunci Ketenangan Hati',
-    ringkasan: 'Membahas makna syukur dalam kehidupan sehari-hari dan bagaimana rasa syukur dapat mendatangkan ketenangan serta keberkahan hidup.',
-  },
-  {
-    tanggal: '5 September 2026',
-    khatib: 'Ustadz Ahmad Fauzi',
-    judul: 'Meneladani Akhlak Rasulullah dalam Bermasyarakat',
-    ringkasan: 'Mengupas contoh akhlak Rasulullah SAW dalam berinteraksi dengan tetangga dan masyarakat sebagai teladan hidup bersosial yang baik.',
-  },
-]
-
-// ── DATA BARU: PENGURUS DKM ──
-const PENGURUS = [
-  { nama: 'H. Sulaiman Effendi', jabatan: 'Ketua DKM', inisial: 'SE' },
-  { nama: 'Drs. Bambang Wijaya', jabatan: 'Wakil Ketua', inisial: 'BW' },
-  { nama: 'Ahmad Yusuf, S.Pd', jabatan: 'Sekretaris', inisial: 'AY' },
-  { nama: 'Hj. Siti Rahmawati', jabatan: 'Bendahara', inisial: 'SR' },
 ]
 
 function Navbar({ onDonasi }) {
@@ -125,7 +49,6 @@ function Navbar({ onDonasi }) {
   )
 }
 
-// ── SECTION BARU: JADWAL SHOLAT (standalone, clean) ──
 function SectionJadwal() {
   const [jam, setJam] = useState('')
   const [tanggal, setTanggal] = useState('')
@@ -191,7 +114,6 @@ function DonasiOverlay({ onClose }) {
   )
 }
 
-// ── SECTION BARU: MIMBAR JUMAT ──
 function SectionMimbarJumat() {
   return (
     <section id="mimbar-jumat" className="bg-white py-20 px-6">
@@ -230,7 +152,6 @@ function SectionMimbarJumat() {
   )
 }
 
-// ── SECTION BARU: PROFIL PENGURUS DKM ──
 function SectionPengurus() {
   return (
     <section id="pengurus" className="bg-gray-50 py-20 px-6">
@@ -254,8 +175,8 @@ function SectionPengurus() {
 }
 
 function SectionBerita() {
-  const featured = BERITA.find(b => b.featured)
-  const smalls   = BERITA.filter(b => !b.featured)
+  const featured = BERITA_ALL[0]
+  const smalls   = BERITA_ALL.slice(1, 4)
   return (
     <section id="berita" className="bg-white py-20 px-6">
       <div className="max-w-6xl mx-auto">
@@ -340,7 +261,7 @@ export default function Home() {
       <Navbar onDonasi={() => setShowDonasi(true)} />
       {showDonasi && <DonasiOverlay onClose={() => setShowDonasi(false)} />}
 
-      {/* ── HERO (sekarang full teks, tanpa card jadwal) ── */}
+      {/* ── HERO ── */}
       <section id="beranda" className="relative min-h-screen flex items-center">
         <Image src="/hero-bg.jpg" alt="Masjid Lathifah" fill className="object-cover object-center" priority />
         <div className="absolute inset-0 bg-[#0d3d2b]/65" />
@@ -451,16 +372,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── JADWAL SHOLAT (section sendiri) ── */}
+      {/* ── JADWAL SHOLAT ── */}
       <SectionJadwal />
 
       {/* ── PENGURUS DKM ── */}
       <SectionPengurus />
 
-
       {/* ── MITRA ── */}
       <SectionMitra />
-
 
       {/* ── FOOTER ── */}
       <footer className="bg-[#0d3d2b] text-white py-12 px-6">

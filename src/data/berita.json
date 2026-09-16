@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "kategori": "BERITA",
+    "judul": "Renovasi Selesai, Masjid Lathifah Kini Tampil Lebih Megah dan Nyaman",
+    "ringkasan": "Setelah melalui proses renovasi selama beberapa bulan, Masjid Lathifah kini hadir dengan wajah baru yang lebih megah dan nyaman untuk seluruh jamaah.",
+    "tanggal": "10 September 2026",
+    "img": "/masjid-2.jpg"
+  },
+  {
+    "id": 2,
+    "kategori": "KEGIATAN",
+    "judul": "Kajian Rutin Pekan Ini: Memahami Makna Sabar dalam Kehidupan",
+    "ringkasan": "Kajian pekan ini membahas tema sabar yang dibawakan oleh Ustadz Ahmad Fauzi. Kegiatan berlangsung setiap Ahad pagi pukul 07.00 WIB.",
+    "tanggal": "8 September 2026",
+    "img": "/masjid-3.jpg"
+  },
+  {
+    "id": 3,
+    "kategori": "PENGUMUMAN",
+    "judul": "Jadwal Imam dan Khatib Sholat Jumat Bulan Ini",
+    "ringkasan": "DKM Masjid Lathifah mengumumkan jadwal imam dan khatib untuk sholat Jumat bulan September 2026. Silakan dicatat dan disebarluaskan.",
+    "tanggal": "5 September 2026",
+    "img": "/hero-bg.jpg"
+  },
+  {
+    "id": 4,
+    "kategori": "SOSIAL",
+    "judul": "Santunan Anak Yatim: Terkumpul Rp 12 Juta dari Jamaah",
+    "ringkasan": "Alhamdulillah, kegiatan santunan anak yatim yang diadakan DKM Masjid Lathifah berhasil mengumpulkan dana sebesar Rp 12 juta dari para jamaah.",
+    "tanggal": "1 September 2026",
+    "img": "/masjid-2.jpg"
+  },
+  {
+    "id": 5,
+    "kategori": "KEGIATAN",
+    "judul": "TPA Lathifah Buka Pendaftaran Santri Baru Tahun Ajaran 2026",
+    "ringkasan": "TPA Masjid Lathifah membuka pendaftaran santri baru untuk tahun ajaran 2026. Pendaftaran dibuka mulai 1 hingga 30 Oktober 2026.",
+    "tanggal": "28 Agustus 2026",
+    "img": "/masjid-3.jpg"
+  },
+  {
+    "id": 6,
+    "kategori": "PENGUMUMAN",
+    "judul": "Pengurus DKM Lathifah Periode 2026-2028 Resmi Dilantik",
+    "ringkasan": "Pengurus DKM Masjid Lathifah periode 2026-2028 resmi dilantik dalam acara yang dihadiri oleh tokoh masyarakat dan jamaah setempat.",
+    "tanggal": "20 Agustus 2026",
+    "img": "/hero-bg.jpg"
+  }
+]

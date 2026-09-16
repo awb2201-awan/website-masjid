@@ -1,0 +1,10 @@
+[
+  { "nama": "RT 01", "inisial": "RT01" },
+  { "nama": "RT 02", "inisial": "RT02" },
+  { "nama": "RT 03", "inisial": "RT03" },
+  { "nama": "Kelurahan", "inisial": "KEL" },
+  { "nama": "Puskesmas", "inisial": "PKM" },
+  { "nama": "BMT Sejahtera", "inisial": "BMT" },
+  { "nama": "Madrasah Al-Hikmah", "inisial": "MDR" },
+  { "nama": "BAZNAS", "inisial": "BZN" }
+]
