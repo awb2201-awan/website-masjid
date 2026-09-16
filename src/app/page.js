@@ -60,6 +60,36 @@ const MITRA = [
   { nama: 'BAZNAS', inisial: 'BZN' },
 ]
 
+// ── DATA BARU: MIMBAR JUMAT ──
+const MIMBAR_JUMAT = [
+  {
+    tanggal: '19 September 2026',
+    khatib: 'Ustadz Ahmad Fauzi',
+    judul: 'Menjaga Ukhuwah di Tengah Perbedaan',
+    ringkasan: 'Khutbah membahas pentingnya menjaga persaudaraan sesama muslim meski berbeda pandangan, serta adab menyikapi perbedaan dengan akhlak yang baik.',
+  },
+  {
+    tanggal: '12 September 2026',
+    khatib: 'Ustadz Muhammad Ridwan',
+    judul: 'Syukur sebagai Kunci Ketenangan Hati',
+    ringkasan: 'Membahas makna syukur dalam kehidupan sehari-hari dan bagaimana rasa syukur dapat mendatangkan ketenangan serta keberkahan hidup.',
+  },
+  {
+    tanggal: '5 September 2026',
+    khatib: 'Ustadz Ahmad Fauzi',
+    judul: 'Meneladani Akhlak Rasulullah dalam Bermasyarakat',
+    ringkasan: 'Mengupas contoh akhlak Rasulullah SAW dalam berinteraksi dengan tetangga dan masyarakat sebagai teladan hidup bersosial yang baik.',
+  },
+]
+
+// ── DATA BARU: PENGURUS DKM ──
+const PENGURUS = [
+  { nama: 'H. Sulaiman Effendi', jabatan: 'Ketua DKM', inisial: 'SE' },
+  { nama: 'Drs. Bambang Wijaya', jabatan: 'Wakil Ketua', inisial: 'BW' },
+  { nama: 'Ahmad Yusuf, S.Pd', jabatan: 'Sekretaris', inisial: 'AY' },
+  { nama: 'Hj. Siti Rahmawati', jabatan: 'Bendahara', inisial: 'SR' },
+]
+
 function Navbar({ onDonasi }) {
   const [scrolled, setScrolled] = useState(false)
   useEffect(() => {
@@ -79,7 +109,7 @@ function Navbar({ onDonasi }) {
           </div>
         </div>
         <div className="hidden md:flex items-center gap-8">
-          {['Beranda','Tentang','Layanan','Berita','Galeri'].map(m => (
+          {['Beranda','Jadwal','Tentang','Layanan','Berita','Galeri'].map(m => (
             <a key={m} href={`#${m.toLowerCase()}`}
                className="text-white/80 hover:text-[#c9a84c] text-sm font-medium transition-colors">
               {m}
@@ -95,7 +125,8 @@ function Navbar({ onDonasi }) {
   )
 }
 
-function JadwalCard() {
+// ── SECTION BARU: JADWAL SHOLAT (standalone, clean) ──
+function SectionJadwal() {
   const [jam, setJam] = useState('')
   const [tanggal, setTanggal] = useState('')
   useEffect(() => {
@@ -110,21 +141,25 @@ function JadwalCard() {
   }, [])
 
   return (
-    <div className="bg-[#0d3d2b]/80 backdrop-blur border border-[#c9a84c]/30 rounded-2xl p-6 w-full max-w-sm text-white">
-      <div className="flex justify-between items-center mb-4">
-        <span className="text-xs text-white/60 uppercase tracking-widest">Jadwal Sholat</span>
-        <span className="text-[#c9a84c] font-mono text-sm">{jam}</span>
+    <section id="jadwal" className="bg-[#0d3d2b] py-16 px-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-10">
+          <p className="text-[#c9a84c] text-sm uppercase tracking-widest mb-2">Waktu Ibadah</p>
+          <h2 className="text-white text-3xl font-bold mb-2">Jadwal Sholat Hari Ini</h2>
+          <p className="text-white/50 text-sm">{tanggal} — <span className="text-[#c9a84c] font-mono">{jam}</span></p>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+          {JADWAL.map(j => (
+            <div key={j.nama}
+              className="bg-white/5 border border-[#c9a84c]/20 rounded-2xl py-6 text-center hover:border-[#c9a84c]/50 transition-colors">
+              <p className="text-white/60 text-xs uppercase tracking-widest mb-2">{j.nama}</p>
+              <p className="text-white font-bold text-xl">{j.waktu}</p>
+              <p className="text-[#c9a84c] text-xs mt-1">WIB</p>
+            </div>
+          ))}
+        </div>
       </div>
-      <p className="text-[#c9a84c] text-xs mb-4">{tanggal}</p>
-      <div className="space-y-2">
-        {JADWAL.map(j => (
-          <div key={j.nama} className="flex justify-between items-center py-1.5 border-b border-white/10 last:border-0">
-            <span className="text-sm text-white/80">{j.nama}</span>
-            <span className="font-semibold text-sm">{j.waktu} WIB</span>
-          </div>
-        ))}
-      </div>
-    </div>
+    </section>
   )
 }
 
@@ -156,6 +191,68 @@ function DonasiOverlay({ onClose }) {
   )
 }
 
+// ── SECTION BARU: MIMBAR JUMAT ──
+function SectionMimbarJumat() {
+  return (
+    <section id="mimbar-jumat" className="bg-white py-20 px-6">
+      <div className="max-w-6xl mx-auto">
+        <p className="text-[#c9a84c] text-sm uppercase tracking-widest mb-2">Khutbah Jumat</p>
+        <h2 className="text-[#0d3d2b] text-3xl font-bold mb-10">Mimbar Jumat</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {MIMBAR_JUMAT.map((m, i) => (
+            <div key={i}
+              className={`rounded-2xl p-6 border transition-all ${
+                i === 0
+                  ? 'bg-[#0d3d2b] border-[#0d3d2b] text-white'
+                  : 'bg-gray-50 border-gray-100 hover:border-[#c9a84c]/30'
+              }`}>
+              {i === 0 && (
+                <span className="inline-block bg-[#c9a84c] text-white text-[10px] font-bold px-3 py-1 rounded-full mb-3">
+                  JUMAT TERDEKAT
+                </span>
+              )}
+              <p className={`text-xs mb-2 ${i === 0 ? 'text-white/50' : 'text-gray-400'}`}>{m.tanggal}</p>
+              <h3 className={`font-bold text-base leading-snug mb-2 ${i === 0 ? 'text-white' : 'text-[#0d3d2b]'}`}>
+                {m.judul}
+              </h3>
+              <p className={`text-sm leading-relaxed mb-4 ${i === 0 ? 'text-white/70' : 'text-gray-500'}`}>
+                {m.ringkasan}
+              </p>
+              <div className={`pt-3 border-t ${i === 0 ? 'border-white/10' : 'border-gray-100'}`}>
+                <p className={`text-xs uppercase tracking-widest mb-0.5 ${i === 0 ? 'text-[#c9a84c]' : 'text-[#c9a84c]'}`}>Khatib</p>
+                <p className={`text-sm font-semibold ${i === 0 ? 'text-white' : 'text-[#0d3d2b]'}`}>{m.khatib}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ── SECTION BARU: PROFIL PENGURUS DKM ──
+function SectionPengurus() {
+  return (
+    <section id="pengurus" className="bg-gray-50 py-20 px-6">
+      <div className="max-w-6xl mx-auto">
+        <p className="text-[#c9a84c] text-sm uppercase tracking-widest mb-2">Struktur Organisasi</p>
+        <h2 className="text-[#0d3d2b] text-3xl font-bold mb-10">Pengurus DKM Lathifah</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+          {PENGURUS.map(p => (
+            <div key={p.nama} className="text-center group">
+              <div className="w-24 h-24 mx-auto rounded-full bg-[#0d3d2b] flex items-center justify-center mb-4 border-4 border-white shadow-md group-hover:border-[#c9a84c]/40 transition-colors">
+                <span className="text-[#c9a84c] font-extrabold text-xl">{p.inisial}</span>
+              </div>
+              <p className="font-bold text-[#0d3d2b] text-sm leading-snug">{p.nama}</p>
+              <p className="text-gray-400 text-xs mt-1">{p.jabatan}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function SectionBerita() {
   const featured = BERITA.find(b => b.featured)
   const smalls   = BERITA.filter(b => !b.featured)
@@ -172,9 +269,7 @@ function SectionBerita() {
           </a>
         </div>
 
-        {/* Bento grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Featured — kiri besar */}
           {featured && (
             <div className="lg:col-span-2 relative rounded-2xl overflow-hidden h-80 group cursor-pointer">
               <Image src={featured.img} alt={featured.judul} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -189,7 +284,6 @@ function SectionBerita() {
             </div>
           )}
 
-          {/* Small cards — kanan */}
           <div className="flex flex-col gap-4">
             {smalls.map(b => (
               <div key={b.id} className="relative rounded-2xl overflow-hidden h-[calc((320px-16px)/3)] group cursor-pointer flex-1">
@@ -216,7 +310,6 @@ function SectionMitra() {
       <div className="max-w-6xl mx-auto mb-6 text-center">
         <p className="text-[#0d3d2b]/40 text-xs uppercase tracking-widest font-bold">Mitra & Kolaborasi</p>
       </div>
-      {/* Slider — duplikasi untuk efek infinite scroll */}
       <div className="relative">
         <div className="flex gap-6 animate-[marquee_20s_linear_infinite] w-max">
           {[...MITRA, ...MITRA].map((m, i) => (
@@ -247,32 +340,27 @@ export default function Home() {
       <Navbar onDonasi={() => setShowDonasi(true)} />
       {showDonasi && <DonasiOverlay onClose={() => setShowDonasi(false)} />}
 
-      {/* ── HERO ── */}
+      {/* ── HERO (sekarang full teks, tanpa card jadwal) ── */}
       <section id="beranda" className="relative min-h-screen flex items-center">
         <Image src="/hero-bg.jpg" alt="Masjid Lathifah" fill className="object-cover object-center" priority />
         <div className="absolute inset-0 bg-[#0d3d2b]/65" />
         <div className="relative z-10 max-w-6xl mx-auto px-6 w-full pt-24 pb-16">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
-            <div className="flex-1">
-              <p className="text-[#c9a84c] text-sm tracking-widest uppercase mb-3">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
-              <p className="text-white/60 text-sm tracking-widest uppercase mb-4">Selamat Datang di</p>
-              <h1 className="text-white text-5xl lg:text-7xl font-extrabold leading-tight mb-2">Masjid</h1>
-              <h1 className="text-[#c9a84c] text-5xl lg:text-7xl font-extrabold leading-tight mb-6">Lathifah</h1>
-              <p className="text-white/70 text-base max-w-md leading-relaxed mb-8">
-                Ruang digital untuk mengenal masjid, melihat jadwal ibadah, serta mengikuti
-                informasi dan kegiatan Masjid Lathifah.
-              </p>
-              <div className="flex gap-4">
-                <a href="#tentang" className="bg-[#c9a84c] hover:bg-[#b8963e] text-white font-semibold px-6 py-3 rounded-full transition-colors">
-                  Kenal Masjid
-                </a>
-                <a href="#layanan" className="border border-white/40 hover:border-white text-white font-semibold px-6 py-3 rounded-full transition-colors">
-                  Lihat Layanan
-                </a>
-              </div>
-            </div>
-            <div className="flex-shrink-0 w-full max-w-sm">
-              <JadwalCard />
+          <div className="max-w-2xl">
+            <p className="text-[#c9a84c] text-sm tracking-widest uppercase mb-3">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
+            <p className="text-white/60 text-sm tracking-widest uppercase mb-4">Selamat Datang di</p>
+            <h1 className="text-white text-5xl lg:text-7xl font-extrabold leading-tight mb-2">Masjid</h1>
+            <h1 className="text-[#c9a84c] text-5xl lg:text-7xl font-extrabold leading-tight mb-6">Lathifah</h1>
+            <p className="text-white/70 text-base max-w-md leading-relaxed mb-8">
+              Ruang digital untuk mengenal masjid, melihat jadwal ibadah, serta mengikuti
+              informasi dan kegiatan Masjid Lathifah.
+            </p>
+            <div className="flex gap-4">
+              <a href="#tentang" className="bg-[#c9a84c] hover:bg-[#b8963e] text-white font-semibold px-6 py-3 rounded-full transition-colors">
+                Kenal Masjid
+              </a>
+              <a href="#jadwal" className="border border-white/40 hover:border-white text-white font-semibold px-6 py-3 rounded-full transition-colors">
+                Lihat Jadwal Sholat
+              </a>
             </div>
           </div>
         </div>
@@ -342,6 +430,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── MIMBAR JUMAT ── */}
+      <SectionMimbarJumat />
+
       {/* ── BERITA ── */}
       <SectionBerita />
 
@@ -360,8 +451,16 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── JADWAL SHOLAT (section sendiri) ── */}
+      <SectionJadwal />
+
+      {/* ── PENGURUS DKM ── */}
+      <SectionPengurus />
+
+
       {/* ── MITRA ── */}
       <SectionMitra />
+
 
       {/* ── FOOTER ── */}
       <footer className="bg-[#0d3d2b] text-white py-12 px-6">
@@ -380,7 +479,7 @@ export default function Home() {
           </div>
           <div>
             <p className="font-semibold mb-3 text-[#c9a84c]">Menu</p>
-            {['Beranda','Tentang','Layanan','Berita','Galeri'].map(m => (
+            {['Beranda','Jadwal','Tentang','Layanan','Berita','Galeri'].map(m => (
               <a key={m} href={`#${m.toLowerCase()}`}
                  className="block text-white/60 hover:text-white text-sm mb-1 transition-colors">{m}</a>
             ))}
