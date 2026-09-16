@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import JADWAL from '@/data/jadwal.json'
+import JADWAL_FALLBACK from '@/data/jadwal.json'
 import MITRA from '@/data/mitra.json'
 import MIMBAR_JUMAT from '@/data/mimbar-jumat.json'
 import PENGURUS from '@/data/pengurus.json'
@@ -52,6 +52,12 @@ function Navbar({ onDonasi }) {
 function SectionJadwal() {
   const [jam, setJam] = useState('')
   const [tanggal, setTanggal] = useState('')
+  const [timings, setTimings] = useState(null)
+  const [hijri, setHijri] = useState(null)
+  const [status, setStatus] = useState('loading') // loading | ok | denied | error
+  const [nextInfo, setNextInfo] = useState(null)
+
+  // Jam & tanggal realtime
   useEffect(() => {
     const tick = () => {
       const now = new Date()
@@ -63,23 +69,134 @@ function SectionJadwal() {
     return () => clearInterval(id)
   }, [])
 
+  // Ambil lokasi + jadwal sholat dari aladhan.com
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setStatus('denied')
+      return
+    }
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords
+          const today = new Date()
+          const dateStr = `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`
+          const res = await fetch(`https://api.aladhan.com/v1/timings/${dateStr}?latitude=${latitude}&longitude=${longitude}&method=20`)
+          const json = await res.json()
+          const t = json.data.timings
+          setTimings({
+            Subuh: t.Fajr,
+            Dzuhur: t.Dhuhr,
+            Ashar: t.Asr,
+            Maghrib: t.Maghrib,
+            Isya: t.Isha,
+          })
+          setHijri(json.data.date.hijri)
+          setStatus('ok')
+        } catch (e) {
+          setStatus('error')
+        }
+      },
+      () => setStatus('denied'),
+      { timeout: 8000 }
+    )
+  }, [])
+
+  // Hitung sholat berikutnya + countdown
+  useEffect(() => {
+    const sumber = timings || Object.fromEntries(JADWAL_FALLBACK.map(j => [j.nama, j.waktu.replace('.', ':')]))
+    const urutan = ['Subuh', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya']
+
+    const hitung = () => {
+      const now = new Date()
+      let target = null
+      let nama = null
+      for (const n of urutan) {
+        const [h, m] = sumber[n].split(':').map(Number)
+        const waktu = new Date(now)
+        waktu.setHours(h, m, 0, 0)
+        if (waktu > now) {
+          target = waktu
+          nama = n
+          break
+        }
+      }
+      if (!target) {
+        const [h, m] = sumber['Subuh'].split(':').map(Number)
+        target = new Date(now)
+        target.setDate(target.getDate() + 1)
+        target.setHours(h, m, 0, 0)
+        nama = 'Subuh'
+      }
+      const diff = target - now
+      setNextInfo({
+        nama,
+        jamSisa: Math.floor(diff / 3600000),
+        menitSisa: Math.floor((diff % 3600000) / 60000),
+        detikSisa: Math.floor((diff % 60000) / 1000),
+      })
+    }
+
+    hitung()
+    const id = setInterval(hitung, 1000)
+    return () => clearInterval(id)
+  }, [timings])
+
+  const dataTampil = timings
+    ? Object.entries(timings).map(([nama, waktu]) => ({ nama, waktu: waktu.replace(':', '.') }))
+    : JADWAL_FALLBACK
+
   return (
     <section id="jadwal" className="bg-[#0d3d2b] py-16 px-6">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-10">
+        <div className="text-center mb-6">
           <p className="text-[#c9a84c] text-sm uppercase tracking-widest mb-2">Waktu Ibadah</p>
           <h2 className="text-white text-3xl font-bold mb-2">Jadwal Sholat Hari Ini</h2>
-          <p className="text-white/50 text-sm">{tanggal} — <span className="text-[#c9a84c] font-mono">{jam}</span></p>
+          <p className="text-white/50 text-sm">
+            {tanggal} — <span className="text-[#c9a84c] font-mono">{jam}</span>
+          </p>
+          {hijri && (
+            <p className="text-white/40 text-xs mt-1">
+              {hijri.day} {hijri.month.en} {hijri.year} H
+            </p>
+          )}
+          {status === 'denied' && (
+            <p className="text-yellow-400/70 text-xs mt-2">
+              Lokasi tidak diizinkan — menampilkan jadwal default. Izinkan akses lokasi untuk jadwal akurat sesuai posisi Anda.
+            </p>
+          )}
+          {status === 'error' && (
+            <p className="text-yellow-400/70 text-xs mt-2">
+              Gagal mengambil jadwal online — menampilkan jadwal default.
+            </p>
+          )}
         </div>
+
+        {nextInfo && (
+          <div className="text-center mb-8">
+            <p className="text-white/60 text-xs uppercase tracking-widest mb-1">Menuju {nextInfo.nama}</p>
+            <p className="text-[#c9a84c] font-mono text-2xl font-bold">
+              {String(nextInfo.jamSisa).padStart(2, '0')}:{String(nextInfo.menitSisa).padStart(2, '0')}:{String(nextInfo.detikSisa).padStart(2, '0')}
+            </p>
+          </div>
+        )}
+
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-          {JADWAL.map(j => (
-            <div key={j.nama}
-              className="bg-white/5 border border-[#c9a84c]/20 rounded-2xl py-6 text-center hover:border-[#c9a84c]/50 transition-colors">
-              <p className="text-white/60 text-xs uppercase tracking-widest mb-2">{j.nama}</p>
-              <p className="text-white font-bold text-xl">{j.waktu}</p>
-              <p className="text-[#c9a84c] text-xs mt-1">WIB</p>
-            </div>
-          ))}
+          {dataTampil.map(j => {
+            const aktif = nextInfo && nextInfo.nama === j.nama
+            return (
+              <div key={j.nama}
+                className={`rounded-2xl py-6 text-center border transition-colors ${
+                  aktif
+                    ? 'bg-[#c9a84c]/20 border-[#c9a84c]'
+                    : 'bg-white/5 border-[#c9a84c]/20 hover:border-[#c9a84c]/50'
+                }`}>
+                <p className="text-white/60 text-xs uppercase tracking-widest mb-2">{j.nama}</p>
+                <p className="text-white font-bold text-xl">{j.waktu}</p>
+                <p className="text-[#c9a84c] text-xs mt-1">WIB</p>
+              </div>
+            )
+          })}
         </div>
       </div>
     </section>
