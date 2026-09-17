@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import SEMUA_BERITA from '@/data/berita.json'
@@ -16,10 +16,20 @@ const KATEGORI_LIST = ['Semua', 'Berita', 'Kegiatan', 'Pengumuman', 'Sosial']
 
 export default function BeritaPage() {
   const [filterAktif, setFilterAktif] = useState('Semua')
+  const [semuaBerita, setSemuaBerita] = useState(SEMUA_BERITA)
+
+  useEffect(() => {
+    fetch('/api/berita')
+      .then((response) => response.ok ? response.json() : [])
+      .then((beritaSanity) => {
+        if (beritaSanity.length > 0) setSemuaBerita(beritaSanity)
+      })
+      .catch(() => {})
+  }, [])
 
   const beritaTampil = filterAktif === 'Semua'
-    ? SEMUA_BERITA
-    : SEMUA_BERITA.filter(b => b.kategori === filterAktif.toUpperCase())
+    ? semuaBerita
+    : semuaBerita.filter(b => b.kategori === filterAktif.toUpperCase())
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -66,7 +76,8 @@ export default function BeritaPage() {
                 className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md hover:border-[#c9a84c]/30 transition-all group cursor-pointer block">
                 {/* Gambar */}
                 <div className="relative h-48 overflow-hidden">
-                  <Image src={b.img} alt={b.judul} fill
+                  <Image src={b.img} alt={b.judul} fill sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    unoptimized={b.img.startsWith('http')}
                     className="object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute top-3 left-3">
                     <span className={`text-xs font-bold px-3 py-1 rounded-full ${WARNA_KATEGORI[b.kategori] || 'bg-gray-600 text-white'}`}>

@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import JADWAL_FALLBACK from '@/data/jadwal.json'
 import MITRA from '@/data/mitra.json'
 import MIMBAR_JUMAT from '@/data/mimbar-jumat.json'
@@ -155,7 +156,7 @@ function SectionJadwal() {
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      setStatus('denied')
+      queueMicrotask(() => setStatus('denied'))
       return
     }
     navigator.geolocation.getCurrentPosition(
@@ -319,6 +320,17 @@ function DonasiOverlay({ onClose }) {
 }
 
 function SectionMimbarJumat() {
+  const [mimbar, setMimbar] = useState(MIMBAR_JUMAT)
+
+  useEffect(() => {
+    fetch('/api/mimbar-jumat')
+      .then((response) => response.ok ? response.json() : [])
+      .then((items) => {
+        if (items.length > 0) setMimbar(items)
+      })
+      .catch(() => {})
+  }, [])
+
   return (
     <section id="mimbar-jumat" className="relative bg-white py-20 px-6 overflow-hidden">
       <IslamicPattern className="inset-0 text-[#0d3d2b] opacity-[0.025]" />
@@ -328,7 +340,7 @@ function SectionMimbarJumat() {
           <h2 className="text-[#0d3d2b] text-3xl font-bold mb-10">Mimbar Jumat</h2>
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {MIMBAR_JUMAT.map((m, i) => (
+          {mimbar.map((m, i) => (
             <Reveal key={i} delay={i * 100}>
               <div
                 className={`rounded-2xl p-6 border transition-all duration-300 hover:-translate-y-1 ${
@@ -362,6 +374,17 @@ function SectionMimbarJumat() {
 }
 
 function SectionPengurus() {
+  const [pengurus, setPengurus] = useState(PENGURUS)
+
+  useEffect(() => {
+    fetch('/api/pengurus')
+      .then((response) => response.ok ? response.json() : [])
+      .then((pengurusSanity) => {
+        if (pengurusSanity.length > 0) setPengurus(pengurusSanity)
+      })
+      .catch(() => {})
+  }, [])
+
   return (
     <section id="pengurus" className="relative bg-gray-50 py-20 px-6 overflow-hidden">
       <IslamicPattern className="inset-0 text-[#0d3d2b] opacity-[0.03]" />
@@ -371,11 +394,15 @@ function SectionPengurus() {
           <h2 className="text-[#0d3d2b] text-3xl font-bold mb-10">Pengurus DKM Lathifah</h2>
         </Reveal>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-          {PENGURUS.map((p, i) => (
+          {pengurus.map((p, i) => (
             <Reveal key={p.nama} delay={i * 80}>
               <div className="text-center group">
-                <div className="w-24 h-24 mx-auto rounded-full bg-[#0d3d2b] flex items-center justify-center mb-4 border-4 border-white shadow-md group-hover:shadow-xl group-hover:border-[#c9a84c]/40 group-hover:-translate-y-1 transition-all duration-300">
-                  <span className="text-[#c9a84c] font-extrabold text-xl">{p.inisial}</span>
+                <div className="relative w-24 h-24 mx-auto rounded-full bg-[#0d3d2b] flex items-center justify-center mb-4 border-4 border-white shadow-md group-hover:shadow-xl group-hover:border-[#c9a84c]/40 group-hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                  {p.foto ? (
+                    <Image src={p.foto} alt={p.nama} fill unoptimized className="object-cover" />
+                  ) : (
+                    <span className="text-[#c9a84c] font-extrabold text-xl">{p.inisial}</span>
+                  )}
                 </div>
                 <p className="font-bold text-[#0d3d2b] text-sm leading-snug">{p.nama}</p>
                 <p className="text-gray-400 text-xs mt-1">{p.jabatan}</p>
@@ -389,8 +416,19 @@ function SectionPengurus() {
 }
 
 function SectionBerita() {
-  const featured = BERITA_ALL[0]
-  const smalls   = BERITA_ALL.slice(1, 4)
+  const [semuaBerita, setSemuaBerita] = useState(BERITA_ALL)
+
+  useEffect(() => {
+    fetch('/api/berita')
+      .then((response) => response.ok ? response.json() : [])
+      .then((beritaSanity) => {
+        if (beritaSanity.length > 0) setSemuaBerita(beritaSanity)
+      })
+      .catch(() => {})
+  }, [])
+
+  const featured = semuaBerita[0]
+  const smalls   = semuaBerita.slice(1, 4)
   return (
     <section id="berita" className="relative bg-white py-20 px-6 overflow-hidden">
       <IslamicPattern className="inset-0 text-[#0d3d2b] opacity-[0.025]" />
@@ -401,9 +439,9 @@ function SectionBerita() {
               <p className="text-[#c9a84c] text-sm uppercase tracking-widest mb-2">Informasi</p>
               <h2 className="text-[#0d3d2b] text-3xl font-bold">Berita Terbaru</h2>
             </div>
-            <a href="/berita" className="text-[#0d3d2b] text-sm font-semibold hover:text-[#c9a84c] transition-colors">
+            <Link href="/berita" className="text-[#0d3d2b] text-sm font-semibold hover:text-[#c9a84c] transition-colors">
               Semua Berita →
-            </a>
+            </Link>
           </div>
         </Reveal>
 
@@ -411,7 +449,7 @@ function SectionBerita() {
           {featured && (
             <Reveal>
               <div className="lg:col-span-2 relative rounded-2xl overflow-hidden h-80 group cursor-pointer shadow-md hover:shadow-2xl transition-shadow duration-300">
-                <Image src={featured.img} alt={featured.judul} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Image src={featured.img} alt={featured.judul} fill sizes="(min-width: 1024px) 66vw, 100vw" unoptimized={featured.img.startsWith('http')} className="object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-6">
                   <span className="bg-[#c9a84c] text-white text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">
@@ -428,7 +466,7 @@ function SectionBerita() {
             {smalls.map((b, i) => (
               <Reveal key={b.id} delay={i * 100}>
                 <div className="relative rounded-2xl overflow-hidden h-[calc((320px-16px)/3)] group cursor-pointer shadow-sm hover:shadow-lg transition-shadow duration-300">
-                  <Image src={b.img} alt={b.judul} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <Image src={b.img} alt={b.judul} fill sizes="(min-width: 1024px) 33vw, 100vw" unoptimized={b.img.startsWith('http')} className="object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 p-4">
                     <span className="bg-[#c9a84c] text-white text-[10px] font-bold px-2 py-0.5 rounded-full mb-1 inline-block">
@@ -447,6 +485,17 @@ function SectionBerita() {
 }
 
 function SectionMitra() {
+  const [mitra, setMitra] = useState(MITRA)
+
+  useEffect(() => {
+    fetch('/api/mitra')
+      .then((response) => response.ok ? response.json() : [])
+      .then((items) => {
+        if (items.length > 0) setMitra(items)
+      })
+      .catch(() => {})
+  }, [])
+
   return (
     <section className="bg-gray-50 py-12 px-6 overflow-hidden">
       <div className="max-w-6xl mx-auto mb-6 text-center">
@@ -456,7 +505,7 @@ function SectionMitra() {
         <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-gray-50 to-transparent z-10" />
         <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-gray-50 to-transparent z-10" />
         <div className="flex gap-6 animate-[marquee_20s_linear_infinite] w-max">
-          {[...MITRA, ...MITRA].map((m, i) => (
+          {[...mitra, ...mitra].map((m, i) => (
             <div key={i}
               className="flex-shrink-0 w-32 h-16 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#c9a84c]/30 transition-all flex flex-col items-center justify-center gap-1 px-3">
               <span className="text-[#0d3d2b] font-extrabold text-sm">{m.inisial}</span>
@@ -471,6 +520,20 @@ function SectionMitra() {
 
 export default function Home() {
   const [showDonasi, setShowDonasi] = useState(false)
+  const [galeri, setGaleri] = useState([
+    {id: 'hero', judul: 'Masjid Lathifah', img: '/hero-bg.jpg'},
+    {id: 'masjid-2', judul: 'Masjid Lathifah', img: '/masjid-2.jpg'},
+    {id: 'masjid-3', judul: 'Masjid Lathifah', img: '/masjid-3.jpg'},
+  ])
+
+  useEffect(() => {
+    fetch('/api/galeri')
+      .then((response) => response.ok ? response.json() : [])
+      .then((galeriSanity) => {
+        if (galeriSanity.length > 0) setGaleri(galeriSanity)
+      })
+      .catch(() => {})
+  }, [])
 
   return (
     <>
@@ -606,10 +669,10 @@ export default function Home() {
             <h2 className="text-[#0d3d2b] text-3xl font-bold mb-10">Dokumentasi Masjid</h2>
           </Reveal>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {['/hero-bg.jpg', '/masjid-2.jpg', '/masjid-3.jpg'].map((src, i) => (
-              <Reveal key={i} delay={i * 100}>
+            {galeri.map((item, i) => (
+              <Reveal key={item.id} delay={i * 100}>
                 <div className="relative h-56 rounded-2xl overflow-hidden group shadow-sm hover:shadow-xl transition-shadow duration-300">
-                  <Image src={src} alt={`Foto masjid ${i+1}`} fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <Image src={item.img} alt={item.judul || `Foto masjid ${i+1}`} fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" unoptimized={item.img.startsWith('http')} className="object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
               </Reveal>
             ))}

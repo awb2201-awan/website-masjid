@@ -2,6 +2,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import SEMUA_BERITA from '@/data/berita.json'
+import {client} from '@/sanity/lib/client'
+import {beritaByIdQuery} from '@/sanity/lib/queries'
 
 const WARNA_KATEGORI = {
   'BERITA':     'bg-[#0d3d2b] text-white',
@@ -12,7 +14,19 @@ const WARNA_KATEGORI = {
 
 export default async function DetailBeritaPage({ params }) {
   const { id } = await params
-  const berita = SEMUA_BERITA.find(b => String(b.id) === id)
+  const beritaSanity = await client.fetch(beritaByIdQuery, {id})
+  const berita = beritaSanity
+    ? {
+        id: beritaSanity._id,
+        kategori: beritaSanity.kategori,
+        judul: beritaSanity.judul,
+        tanggal: beritaSanity.tanggal
+          ? new Intl.DateTimeFormat('id-ID', {day: 'numeric', month: 'long', year: 'numeric'}).format(new Date(beritaSanity.tanggal))
+          : '',
+        img: beritaSanity.gambar?.asset?.url || '/hero-bg.jpg',
+        isi: beritaSanity.isi?.map((block) => block.children?.map((child) => child.text).join('')).filter(Boolean).join('\n\n') || beritaSanity.ringkasan,
+      }
+    : SEMUA_BERITA.find(b => String(b.id) === id)
   if (!berita) return notFound()
 
   const paragraf = (berita.isi || berita.ringkasan).split('\n\n')
@@ -37,7 +51,7 @@ export default async function DetailBeritaPage({ params }) {
       {/* ── GAMBAR ── */}
       <div className="max-w-3xl mx-auto px-6 -mt-6">
         <div className="relative h-64 md:h-96 rounded-2xl overflow-hidden shadow-lg">
-          <Image src={berita.img} alt={berita.judul} fill className="object-cover" />
+          <Image src={berita.img} alt={berita.judul} fill sizes="(min-width: 768px) 768px, 100vw" unoptimized={berita.img.startsWith('http')} className="object-cover" />
         </div>
       </div>
 
