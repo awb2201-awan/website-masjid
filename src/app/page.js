@@ -15,6 +15,9 @@ const LAYANAN = [
   { icon: '❤️', judul: 'Sosial & Zakat',     desc: 'Pengelolaan zakat, infaq, sedekah, dan santunan dhuafa.' },
 ]
 
+const GOOGLE_MAPS_URL = 'https://maps.app.goo.gl/4qac5V8LgmyhVQk87'
+const GOOGLE_MAPS_EMBED_URL = 'https://www.google.com/maps?q=-6.4231169,106.8405725&output=embed'
+
 /* ── HELPER: animasi muncul pas discroll ── */
 function Reveal({ children, delay = 0 }) {
   const elRef = useRef(null)
@@ -73,7 +76,7 @@ function Navbar({ onDonasi }) {
     return () => window.removeEventListener('scroll', fn)
   }, [])
 
-  const MENU = ['Beranda','Jadwal','Tentang','Layanan','Berita','Galeri']
+  const MENU = ['Beranda','Jadwal','Tentang','Layanan','Berita','Galeri','Lokasi']
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || menuOpen ? 'bg-[#0d3d2b]/95 backdrop-blur shadow-lg' : 'bg-[#0d3d2b]/40 backdrop-blur-md'}`}>
@@ -696,6 +699,35 @@ export default function Home() {
       {/* ── MITRA ── */}
       <SectionMitra />
 
+      {/* ── LOKASI ── */}
+      <section id="lokasi" className="bg-white py-16 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-8">
+            <p className="text-[#c9a84c] text-sm uppercase tracking-widest mb-2">Lokasi</p>
+            <h2 className="text-[#0d3d2b] text-3xl font-bold">Temukan Masjid Lathifah</h2>
+            <p className="text-gray-500 text-sm mt-2">Masjid Jami&apos; Lathifah GSA</p>
+          </div>
+          <div className="overflow-hidden rounded-2xl border border-gray-100 shadow-lg">
+            <iframe
+              title="Lokasi Masjid Jami' Lathifah GSA"
+              src={GOOGLE_MAPS_EMBED_URL}
+              className="w-full h-[320px] md:h-[420px] border-0"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
+          </div>
+          <a
+            href={GOOGLE_MAPS_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 mt-5 bg-[#0d3d2b] hover:bg-[#0a2e21] text-white font-semibold px-5 py-3 rounded-full transition-colors"
+          >
+            Buka navigasi Google Maps <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </section>
+
       {/* ── FOOTER ── */}
       <footer className="bg-[#0d3d2b] text-white py-12 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-8">
@@ -708,12 +740,20 @@ export default function Home() {
           </div>
           <div>
             <p className="font-semibold mb-3 text-[#c9a84c]">Kontak</p>
-            <p className="text-white/60 text-sm">Jl. [Alamat Masjid]</p>
-            <p className="text-white/60 text-sm">Jakarta</p>
+            <p className="text-white/60 text-sm">Masjid Jami&apos; Lathifah GSA</p>
+            <p className="text-white/60 text-sm">Gunung Sindur, Jawa Barat</p>
+            <a
+              href={GOOGLE_MAPS_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 mt-3 text-[#c9a84c] hover:text-white text-sm font-semibold transition-colors"
+            >
+              Lihat lokasi di Google Maps <span aria-hidden="true">→</span>
+            </a>
           </div>
           <div>
             <p className="font-semibold mb-3 text-[#c9a84c]">Menu</p>
-            {['Beranda','Jadwal','Tentang','Layanan','Berita','Galeri'].map(m => (
+            {['Beranda','Jadwal','Tentang','Layanan','Berita','Galeri','Lokasi'].map(m => (
               <a key={m} href={`#${m.toLowerCase()}`}
                  className="block text-white/60 hover:text-white text-sm mb-1 transition-colors">{m}</a>
             ))}
