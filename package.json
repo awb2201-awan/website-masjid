@@ -10,6 +10,8 @@
     "migrate:data": "sanity exec scripts/migrate-data.mjs --with-user-token"
   },
   "dependencies": {
+    "@openrouter/agent": "^0.11.0",
+    "@openrouter/sdk": "^1.2.138",
     "@sanity/image-url": "^2.1.1",
     "@sanity/vision": "^5.31.2",
     "next": "16.3.5",

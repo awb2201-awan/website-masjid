@@ -89,7 +89,7 @@ function Navbar({ onDonasi }) {
           </div>
         </div>
 
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-8">
           {MENU.map(m => (
             <a key={m} href={`#${m.toLowerCase()}`}
                className="text-white/100 hover:text-[#c9a84c] text-lg font-medium transition-colors">
@@ -104,7 +104,7 @@ function Navbar({ onDonasi }) {
 
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="md:hidden text-white p-2"
+          className="lg:hidden text-white p-2"
           aria-label="Buka menu"
         >
           {menuOpen ? (
@@ -119,7 +119,7 @@ function Navbar({ onDonasi }) {
         </button>
       </div>
 
-      <div className={`md:hidden overflow-hidden transition-all duration-300 ${menuOpen ? 'max-h-96' : 'max-h-0'}`}>
+      <div className={`lg:hidden overflow-hidden transition-all duration-300 ${menuOpen ? 'max-h-96' : 'max-h-0'}`}>
         <div className="px-6 pb-4 flex flex-col gap-1">
           {MENU.map(m => (
             <a key={m} href={`#${m.toLowerCase()}`}
