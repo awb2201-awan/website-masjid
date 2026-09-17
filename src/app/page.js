@@ -37,7 +37,7 @@ function Reveal({ children, delay = 0 }) {
     <div
       ref={elRef}
       style={{ transitionDelay: `${delay}ms` }}
-      className={`transition-all duration-700 ease-out ${
+      className={`transition-all duration-500 ease-out ${
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}
     >
@@ -504,7 +504,7 @@ export default function Home() {
                 <a href="#tentang" className="bg-[#c9a84c] hover:bg-[#b8963e] text-white font-semibold px-6 py-3 rounded-full shadow-lg shadow-[#c9a84c]/30 hover:shadow-xl hover:shadow-[#c9a84c]/40 hover:scale-105 transition-all duration-300">
                   Kenal Masjid
                 </a>
-                <a href="#jadwal" className="border border-white/40 hover:border-white hover:bg-white/10 text-white font-semibold px-6 py-3 rounded-full backdrop-blur-sm hover:scale-105 transition-all duration-300">
+                <a href="#jadwal" className="border border-white/40 hover:border-white hover:bg-white/10 text-white font-semibold px-5 sm:px-6 py-3 rounded-full backdrop-blur-sm hover:scale-105 transition-all duration-300 text-center">
                   Lihat Jadwal Sholat
                 </a>
               </div>
@@ -609,7 +609,7 @@ export default function Home() {
             {['/hero-bg.jpg', '/masjid-2.jpg', '/masjid-3.jpg'].map((src, i) => (
               <Reveal key={i} delay={i * 100}>
                 <div className="relative h-56 rounded-2xl overflow-hidden group shadow-sm hover:shadow-xl transition-shadow duration-300">
-                  <Image src={src} alt={`Foto masjid ${i+1}`} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <Image src={src} alt={`Foto masjid ${i+1}`} fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
               </Reveal>
             ))}
