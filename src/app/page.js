@@ -665,11 +665,18 @@ export default function Home() {
         <IslamicPattern className="inset-0 text-[#0d3d2b] opacity-[0.03]" />
         <div className="max-w-6xl mx-auto relative">
           <Reveal>
-            <p className="text-[#c9a84c] text-sm uppercase tracking-widest mb-2">Galeri</p>
-            <h2 className="text-[#0d3d2b] text-3xl font-bold mb-10">Dokumentasi Masjid</h2>
+            <div className="flex items-end justify-between gap-4 mb-10">
+              <div>
+                <p className="text-[#c9a84c] text-sm uppercase tracking-widest mb-2">Galeri</p>
+                <h2 className="text-[#0d3d2b] text-3xl font-bold">Dokumentasi Masjid</h2>
+              </div>
+              <Link href="/galeri" className="text-[#0d3d2b] text-sm font-semibold hover:text-[#c9a84c] transition-colors whitespace-nowrap">
+                Lihat Semua →
+              </Link>
+            </div>
           </Reveal>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {galeri.map((item, i) => (
+            {galeri.slice(0, 3).map((item, i) => (
               <Reveal key={item.id} delay={i * 100}>
                 <div className="relative h-56 rounded-2xl overflow-hidden group shadow-sm hover:shadow-xl transition-shadow duration-300">
                   <Image src={item.img} alt={item.judul || `Foto masjid ${i+1}`} fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" unoptimized={item.img.startsWith('http')} className="object-cover group-hover:scale-105 transition-transform duration-500" />
