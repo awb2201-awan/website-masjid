@@ -15,8 +15,8 @@ const LAYANAN = [
   { icon: '❤️', judul: 'Sosial & Zakat',     desc: 'Pengelolaan zakat, infaq, sedekah, dan santunan dhuafa.' },
 ]
 
-const GOOGLE_MAPS_URL = 'https://maps.app.goo.gl/4qac5V8LgmyhVQk87'
-const GOOGLE_MAPS_EMBED_URL = 'https://www.google.com/maps?q=-6.4231169,106.8405725&output=embed'
+const GOOGLE_MAPS_EMBED_URL = "" // TODO: tunggu URL dari guru
+const GOOGLE_MAPS_URL = ""
 
 /* ── HELPER: animasi muncul pas discroll ── */
 function Reveal({ children, delay = 0 }) {
