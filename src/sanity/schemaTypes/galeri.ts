@@ -1,11 +1,9 @@
-import {ImageIcon} from '@sanity/icons'
 import {defineField, defineType} from 'sanity'
 
 export default defineType({
   name: 'galeri',
   title: 'Galeri',
   type: 'document',
-  icon: ImageIcon,
   fields: [
     defineField({
       name: 'judul',

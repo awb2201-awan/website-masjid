@@ -13,20 +13,22 @@
     "@openrouter/agent": "^0.11.0",
     "@openrouter/sdk": "^1.2.138",
     "@sanity/image-url": "^2.1.1",
-    "@sanity/vision": "^5.31.2",
+    "@sanity/vision": "5.31.2",
     "next": "16.3.5",
     "next-sanity": "^13.3.4",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "sanity": "^5.31.2",
+    "sanity": "5.31.2",
     "styled-components": "^6.5.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "22.20.3",
+    "@types/react": "19.3.0",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
-    "tailwindcss": "^4"
+    "tailwindcss": "^4",
+    "typescript": "5.9.3"
   }
 }

@@ -11,7 +11,9 @@ export async function GET() {
       khatib: item.khatib,
       judul: item.judul,
       ringkasan: item.ringkasan,
-    })))
+    })), {
+      headers: {'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300'},
+    })
   } catch (error) {
     console.error('Failed to load mimbar Jumat from Sanity', error)
     return NextResponse.json({error: 'Data mimbar Jumat sedang tidak tersedia.'}, {status: 503})
