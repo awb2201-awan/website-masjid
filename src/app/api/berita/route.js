@@ -17,6 +17,11 @@ function mapBerita(berita) {
 }
 
 export async function GET() {
-  const berita = await client.fetch(beritaQuery)
-  return NextResponse.json(berita.map(mapBerita))
+  try {
+    const berita = await client.fetch(beritaQuery)
+    return NextResponse.json(berita.map(mapBerita))
+  } catch (error) {
+    console.error('Failed to load berita from Sanity', error)
+    return NextResponse.json({error: 'Data berita sedang tidak tersedia.'}, {status: 503})
+  }
 }

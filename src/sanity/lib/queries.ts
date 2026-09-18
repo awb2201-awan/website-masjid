@@ -1,4 +1,4 @@
-export const beritaQuery = `*[_type == "berita"] | order(tanggal desc) {
+export const beritaQuery = `*[_type == "berita"] | order(tanggal desc)[0...50] {
   _id,
   judul,
   kategori,
@@ -22,14 +22,14 @@ export const beritaByIdQuery = `*[_type == "berita" && _id == $id][0] {
   isi
 }`
 
-export const galeriQuery = `*[_type == "galeri"] | order(_createdAt desc) {
+export const galeriQuery = `*[_type == "galeri"] | order(_createdAt desc)[0...50] {
   _id,
   judul,
   deskripsi,
   gambar { asset->{url} }
 }`
 
-export const pengurusQuery = `*[_type == "pengurus"] | order(urutan asc, _createdAt asc) {
+export const pengurusQuery = `*[_type == "pengurus"] | order(urutan asc, _createdAt asc)[0...50] {
   _id,
   nama,
   jabatan,
@@ -37,10 +37,10 @@ export const pengurusQuery = `*[_type == "pengurus"] | order(urutan asc, _create
   foto { asset->{url} }
 }`
 
-export const mimbarJumatQuery = `*[_type == "mimbarJumat"] | order(tanggal desc) {
+export const mimbarJumatQuery = `*[_type == "mimbarJumat"] | order(tanggal desc)[0...50] {
   _id, tanggal, khatib, judul, ringkasan
 }`
 
-export const mitraQuery = `*[_type == "mitra"] | order(_createdAt asc) {
+export const mitraQuery = `*[_type == "mitra"] | order(_createdAt asc)[0...50] {
   _id, nama, inisial, logo { asset->{url} }
 }`
