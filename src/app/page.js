@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import JADWAL_FALLBACK from '@/data/jadwal.json'
 import MITRA from '@/data/mitra.json'
 import MIMBAR_JUMAT from '@/data/mimbar-jumat.json'
 import PENGURUS from '@/data/pengurus.json'
@@ -16,6 +17,38 @@ const LAYANAN = [
 
 const GOOGLE_MAPS_URL = 'https://maps.app.goo.gl/4qac5V8LgmyhVQk87'
 const GOOGLE_MAPS_EMBED_URL = 'https://www.google.com/maps?q=-6.4231169,106.8405725&output=embed'
+const JADWAL_SCENES = [
+  { range: [0, 4], top: '#02020f', bottom: '#080820' },
+  { range: [4, 5], top: '#120828', bottom: '#6b2060' },
+  { range: [5, 5.5], top: '#2a1248', bottom: '#d45a2a' },
+  { range: [5.5, 6.5], top: '#3a1a3a', bottom: '#e8803a' },
+  { range: [6.5, 8], top: '#1a5a9a', bottom: '#f0c060' },
+  { range: [8, 12], top: '#1060a8', bottom: '#70c0e8' },
+  { range: [12, 15], top: '#0a5090', bottom: '#50aad0' },
+  { range: [15, 17], top: '#1a6aa0', bottom: '#80c0e0' },
+  { range: [17, 17.5], top: '#c04010', bottom: '#f07020' },
+  { range: [17.5, 18], top: '#902030', bottom: '#e05020' },
+  { range: [18, 19], top: '#300a50', bottom: '#a03020' },
+  { range: [19, 24], top: '#02020f', bottom: '#080820' },
+]
+const JADWAL_STARS = Array.from({ length: 40 }, (_, index) => ({
+  left: (index * 37) % 100,
+  top: 5 + ((index * 23) % 58),
+  size: index % 3 === 0 ? 2 : 1,
+}))
+const JADWAL_CLOUDS = [
+  { left: '4%', top: '14%', width: 80, height: 22, duration: 9 },
+  { left: '7%', top: '26%', width: 55, height: 15, duration: 10 },
+  { left: '40%', top: '8%', width: 100, height: 25, duration: 11 },
+  { left: '45%', top: '22%', width: 65, height: 17, duration: 12 },
+  { left: '68%', top: '16%', width: 70, height: 20, duration: 10.5 },
+]
+const JADWAL_NAMES = ['Subuh', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya']
+
+function normalizeWaktu(waktu) {
+  const match = String(waktu || '').match(/(\d{1,2})[:.](\d{2})/)
+  return match ? `${match[1].padStart(2, '0')}:${match[2]}` : '--:--'
+}
 
 /* ── HELPER: animasi muncul pas discroll ── */
 function Reveal({ children, delay = 0 }) {
@@ -75,7 +108,7 @@ function Navbar({ onDonasi }) {
     return () => window.removeEventListener('scroll', fn)
   }, [])
 
-  const MENU = ['Beranda','Tentang','Layanan','Berita','Galeri','Lokasi']
+  const MENU = ['Beranda','Jadwal','Tentang','Layanan','Berita','Galeri','Lokasi']
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || menuOpen ? 'bg-[#0d3d2b]/95 backdrop-blur shadow-lg' : 'bg-[#0d3d2b]/40 backdrop-blur-md'}`}>
@@ -137,7 +170,114 @@ function Navbar({ onDonasi }) {
   )
 }
 
- 
+function SectionJadwal() {
+  const [now, setNow] = useState(null)
+
+  useEffect(() => {
+    setNow(new Date())
+    const id = setInterval(() => setNow(new Date()), 1000)
+    return () => clearInterval(id)
+  }, [])
+
+  const currentNow = now || new Date(2000, 0, 1)
+  const jamDesimal = currentNow.getHours() + currentNow.getMinutes() / 60 + currentNow.getSeconds() / 3600
+  const nowMenit = currentNow.getHours() * 60 + currentNow.getMinutes()
+  const scene = JADWAL_SCENES.find(({ range }) => jamDesimal >= range[0] && jamDesimal < range[1]) || JADWAL_SCENES[0]
+  const malam = jamDesimal < 5.5 || jamDesimal >= 19
+  const dramatis = (jamDesimal >= 5 && jamDesimal < 6.5) || (jamDesimal >= 17 && jamDesimal < 19)
+  const starsOpacity = jamDesimal < 5.5 || jamDesimal >= 18.5 ? 1 : jamDesimal < 6.5 || jamDesimal >= 18 ? 0.3 : 0
+  const cloudsOpacity = jamDesimal >= 7 && jamDesimal < 16.5 ? 0.85 : jamDesimal >= 6 && jamDesimal < 17 ? 0.35 : 0
+  const sunLeft = (jamDesimal / 24) * 100
+  const sunTop = 10 + 60 * (1 - Math.abs(Math.sin((jamDesimal / 24) * Math.PI * 2 + Math.PI / 2)) * 0.9)
+  const waktuSholat = JADWAL_NAMES.map((nama) => ({
+    nama,
+    waktu: normalizeWaktu(JADWAL_FALLBACK.find((item) => item.nama === nama)?.waktu),
+  }))
+  let nextIndex = waktuSholat.findIndex(({ waktu }) => {
+    const [hour, minute] = waktu.split(':').map(Number)
+    return hour * 60 + minute > nowMenit
+  })
+  if (nextIndex === -1) nextIndex = 0
+  const berikutnya = waktuSholat[nextIndex]
+  const [nextHour, nextMinute] = berikutnya.waktu.split(':').map(Number)
+  const currentSeconds = currentNow.getHours() * 3600 + currentNow.getMinutes() * 60 + currentNow.getSeconds()
+  let targetSeconds = nextHour * 3600 + nextMinute * 60
+  if (targetSeconds <= currentSeconds) targetSeconds += 24 * 60 * 60
+  const selisih = targetSeconds - currentSeconds
+  const countdown = [
+    Math.floor(selisih / 3600),
+    Math.floor((selisih % 3600) / 60),
+    selisih % 60,
+  ].map((value) => String(value).padStart(2, '0')).join(':')
+  const celestialStyle = malam
+    ? { width: 20, height: 20, background: 'radial-gradient(circle,#f0f0ff 20%,#c0c0ee 60%,transparent)', boxShadow: '0 0 8px 3px rgba(180,180,255,.4)' }
+    : dramatis
+      ? { width: 28, height: 28, background: 'radial-gradient(circle,#ffe0a0 20%,#ff9040 60%,transparent)', boxShadow: '0 0 22px 10px rgba(255,150,50,.5)' }
+      : { width: 28, height: 28, background: 'radial-gradient(circle,#fffde0 30%,#ffe060 70%,transparent)', boxShadow: '0 0 16px 8px rgba(255,220,50,.35)' }
+
+  return (
+    <section id="jadwal" className="relative overflow-hidden bg-[#edf1ec] px-6 py-16 lg:px-8 lg:py-24">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(201,168,76,.12),transparent_42%)]" />
+      <div className="relative mx-auto grid max-w-[480px] overflow-hidden rounded-[20px] border border-black/10 shadow-[0_16px_50px_rgba(13,61,43,.2)] lg:max-w-6xl lg:grid-cols-[1.35fr_.85fr] lg:rounded-[28px]">
+        <div className="relative h-[clamp(220px,52vw,300px)] overflow-hidden lg:h-[460px]">
+          <div className="absolute inset-0 transition-[background] duration-[6000ms]" style={{ background: `linear-gradient(to bottom, ${scene.top}, ${scene.bottom})` }} />
+          <div className="absolute inset-0 transition-opacity duration-[4000ms]" style={{ opacity: starsOpacity }}>
+            {JADWAL_STARS.map((star, index) => (
+              <span key={index} className="absolute rounded-full bg-white animate-[twinkle_2.5s_ease-in-out_infinite]" style={{ left: `${star.left}%`, top: `${star.top}%`, width: star.size, height: star.size, animationDelay: `${index % 7}s` }} />
+            ))}
+          </div>
+          <div className="absolute inset-0 transition-opacity duration-[4000ms]" style={{ opacity: cloudsOpacity }}>
+            {JADWAL_CLOUDS.map((cloud, index) => (
+              <span key={index} className="absolute rounded-full bg-white/70 blur-[1px] animate-[drift_10s_ease-in-out_infinite_alternate]" style={{ left: cloud.left, top: cloud.top, width: cloud.width, height: cloud.height, animationDuration: `${cloud.duration}s`, animationDelay: `${index}s` }} />
+            ))}
+          </div>
+          <div className="absolute bottom-14 left-0 right-0 h-16" style={{ background: dramatis ? 'linear-gradient(to top, rgba(240,100,30,.7), transparent)' : 'linear-gradient(to top, rgba(10,10,40,.2), transparent)' }} />
+          <div className="absolute rounded-full transition-[left,top] duration-[6000ms]" style={{ left: `${sunLeft}%`, top: `${sunTop}%`, transform: 'translate(-50%, -50%)', ...celestialStyle }} />
+          <svg className="absolute bottom-0 left-0 h-[45%] w-full" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+            <rect x="0" y="270" width="1200" height="30" fill="rgba(0,0,0,.75)" />
+            <path d="M0 270 Q100 220 200 240 Q300 255 400 235 Q500 215 600 230 Q700 245 800 225 Q900 205 1000 230 Q1100 250 1200 235 L1200 300 L0 300Z" fill="rgba(0,0,0,.75)" />
+            <rect x="160" y="160" width="12" height="115" fill="rgba(0,0,0,.75)" /><polygon points="166,145 158,162 174,162" fill="rgba(0,0,0,.75)" /><circle cx="166" cy="141" r="4" fill="#c9a84c" />
+            <rect x="1028" y="160" width="12" height="115" fill="rgba(0,0,0,.75)" /><polygon points="1034,145 1026,162 1042,162" fill="rgba(0,0,0,.75)" /><circle cx="1034" cy="141" r="4" fill="#c9a84c" />
+            <rect x="340" y="200" width="520" height="105" fill="rgba(0,0,0,.75)" />
+            <rect x="355" y="130" width="22" height="175" fill="rgba(0,0,0,.75)" /><polygon points="366,112 353,132 379,132" fill="rgba(0,0,0,.75)" /><circle cx="366" cy="107" r="6" fill="#c9a84c" />
+            <rect x="823" y="130" width="22" height="175" fill="rgba(0,0,0,.75)" /><polygon points="834,112 821,132 847,132" fill="rgba(0,0,0,.75)" /><circle cx="834" cy="107" r="6" fill="#c9a84c" />
+            <ellipse cx="460" cy="200" rx="65" ry="44" fill="rgba(0,0,0,.75)" /><ellipse cx="740" cy="200" rx="65" ry="44" fill="rgba(0,0,0,.75)" /><ellipse cx="600" cy="175" rx="100" ry="70" fill="rgba(0,0,0,.75)" />
+            <path d="M594 112a16 16 0 1 1 12 0" stroke="#c9a84c" strokeWidth="3" fill="none" /><circle cx="608" cy="107" r="3" fill="#c9a84c" />
+          </svg>
+        </div>
+        <div className="bg-[#0d3d2b] p-[clamp(14px,4vw,22px)] lg:flex lg:flex-col lg:justify-center lg:p-10">
+          <div className="mb-4 flex items-start justify-between gap-3 lg:mb-8 lg:gap-6">
+            <div>
+              <p className="text-[clamp(28px,7vw,38px)] font-medium leading-none tracking-[-1px] text-white tabular-nums lg:text-5xl">{now ? now.toLocaleTimeString('id-ID') : '--:--:--'}</p>
+              <p className="mt-1 text-[clamp(10px,2.5vw,12px)] text-white/50 lg:text-sm">{now ? now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }) : 'Memuat waktu...'}</p>
+              <p className="mt-0.5 text-[clamp(9px,2.2vw,11px)] text-[#c9a84c]/75 lg:mt-2 lg:text-xs">Jadwal sholat hari ini</p>
+            </div>
+            <div className="rounded-xl border border-[#c9a84c]/20 bg-white/5 px-3 py-2 text-right lg:min-w-[150px] lg:px-4 lg:py-3">
+              <p className="mb-1 text-[clamp(8px,2vw,9px)] uppercase tracking-[.12em] text-white/35">Berikutnya</p>
+              <p className="text-[clamp(14px,3.8vw,18px)] font-semibold leading-none text-white">{berikutnya.nama}</p>
+              <p className="mt-1 text-[clamp(20px,5.5vw,28px)] font-bold leading-none tracking-[-1px] text-[#c9a84c] tabular-nums [text-shadow:0_0_16px_rgba(201,168,76,.6)]">{countdown}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-5 gap-1.5 lg:gap-2">
+            {waktuSholat.map((sholat, index) => {
+              const [hour, minute] = sholat.waktu.split(':').map(Number)
+              const isNext = index === nextIndex
+              const isDone = hour * 60 + minute < nowMenit && !isNext
+              return (
+                <div key={sholat.nama} className={`flex flex-col items-center gap-1 rounded-[10px] px-0.5 py-2 lg:gap-2 lg:rounded-xl lg:px-2 lg:py-3 ${isNext ? 'border border-[#c9a84c]/35 bg-[#c9a84c]/12' : isDone ? 'border border-white/5 bg-white/[.03]' : 'border border-white/[.06] bg-white/[.05]'}`}>
+                  <span className={`h-1.5 w-1.5 rounded-full ${isNext ? 'bg-[#c9a84c] shadow-[0_0_6px_rgba(201,168,76,.7)]' : isDone ? 'bg-white/20' : 'bg-white/15'}`} />
+                  <p className={`text-center text-[clamp(9px,2.2vw,11px)] uppercase tracking-[.05em] ${isNext ? 'font-semibold text-white' : isDone ? 'text-white/30' : 'text-white/60'}`}>{sholat.nama}</p>
+                  <p className={`text-center text-[clamp(10px,2.5vw,12px)] tabular-nums ${isNext ? 'font-semibold text-[#c9a84c]' : isDone ? 'text-white/20' : 'text-white/45'}`}>{sholat.waktu}</p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function DonasiOverlay({ onClose }) {
   return (
     <div className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
@@ -414,8 +554,8 @@ export default function Home() {
                 <a href="#tentang" className="bg-[#c9a84c] hover:bg-[#b8963e] text-white font-semibold px-6 py-3 rounded-full shadow-lg shadow-[#c9a84c]/30 hover:shadow-xl hover:shadow-[#c9a84c]/40 hover:scale-105 transition-all duration-300">
                   Kenal Masjid
                 </a>
-                <a href="#tentang" className="border border-white/40 hover:border-white hover:bg-white/10 text-white font-semibold px-5 sm:px-6 py-3 rounded-full backdrop-blur-sm hover:scale-105 transition-all duration-300 text-center">
-                  Kenal Masjid
+                <a href="#jadwal" className="border border-white/40 hover:border-white hover:bg-white/10 text-white font-semibold px-5 sm:px-6 py-3 rounded-full backdrop-blur-sm hover:scale-105 transition-all duration-300 text-center">
+                  Jadwal Sholat
                 </a>
               </div>
             </Reveal>
@@ -535,6 +675,7 @@ export default function Home() {
       </section>
 
       {/* ── JADWAL SHOLAT ── */}
+      <SectionJadwal />
 
       {/* ── PENGURUS DKM ── */}
       <SectionPengurus />
