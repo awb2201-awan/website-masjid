@@ -268,7 +268,7 @@ function SectionJadwal() {
       : { width: 28, height: 28, background: 'radial-gradient(circle,#fffde0 30%,#ffe060 70%,transparent)', boxShadow: '0 0 16px 8px rgba(255,220,50,.35)' }
 
   return (
-    <section id="jadwal" className="relative overflow-hidden bg-[#edf1ec] px-6 py-16 lg:px-8 lg:py-24">
+    <section id="jadwal" className="relative overflow-hidden bg-white px-6 py-16 lg:px-8 lg:py-24">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(201,168,76,.12),transparent_42%)]" />
       <div className="relative mx-auto grid max-w-[480px] overflow-hidden rounded-[20px] border border-black/10 shadow-[0_16px_50px_rgba(13,61,43,.2)] lg:max-w-6xl lg:grid-cols-[1.35fr_.85fr] lg:rounded-[28px]">
         <div className="relative h-[clamp(220px,52vw,300px)] overflow-hidden lg:h-[460px]">
