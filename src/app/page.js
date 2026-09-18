@@ -185,11 +185,50 @@ function Navbar({ onDonasi }) {
 
 function SectionJadwal() {
   const [now, setNow] = useState(null)
+  const [timings, setTimings] = useState(null)
+  const [status, setStatus] = useState('loading')
 
   useEffect(() => {
     setNow(new Date())
     const id = setInterval(() => setNow(new Date()), 1000)
     return () => clearInterval(id)
+  }, [])
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setStatus('fallback')
+      return
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async ({ coords }) => {
+        try {
+          const today = new Date()
+          const date = `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`
+          const response = await fetch(
+            `https://api.aladhan.com/v1/timings/${date}?latitude=${coords.latitude}&longitude=${coords.longitude}&method=20`
+          )
+          if (!response.ok) throw new Error(`Aladhan returned ${response.status}`)
+          const json = await response.json()
+          const apiTimings = json.data?.timings
+          const nextTimings = {
+            Subuh: normalizeWaktu(apiTimings?.Fajr),
+            Dzuhur: normalizeWaktu(apiTimings?.Dhuhr),
+            Ashar: normalizeWaktu(apiTimings?.Asr),
+            Maghrib: normalizeWaktu(apiTimings?.Maghrib),
+            Isya: normalizeWaktu(apiTimings?.Isha),
+          }
+          if (Object.values(nextTimings).some((waktu) => waktu === '--:--')) throw new Error('Invalid prayer time response')
+          setTimings(nextTimings)
+          setStatus('online')
+        } catch (error) {
+          console.error('Failed to load prayer times', error)
+          setStatus('fallback')
+        }
+      },
+      () => setStatus('fallback'),
+      { timeout: 8000 }
+    )
   }, [])
 
   const currentNow = now || new Date(2000, 0, 1)
@@ -204,7 +243,7 @@ function SectionJadwal() {
   const sunTop = 10 + 60 * (1 - Math.abs(Math.sin((jamDesimal / 24) * Math.PI * 2 + Math.PI / 2)) * 0.9)
   const waktuSholat = JADWAL_NAMES.map((nama) => ({
     nama,
-    waktu: normalizeWaktu(JADWAL_FALLBACK.find((item) => item.nama === nama)?.waktu),
+    waktu: timings?.[nama] || normalizeWaktu(JADWAL_FALLBACK.find((item) => item.nama === nama)?.waktu),
   }))
   let nextIndex = waktuSholat.findIndex(({ waktu }) => {
     const [hour, minute] = waktu.split(':').map(Number)
@@ -285,6 +324,9 @@ function SectionJadwal() {
               )
             })}
           </div>
+          <p className="mt-4 text-center text-[10px] text-white/40">
+            {status === 'online' ? 'Jadwal berdasarkan lokasi Anda' : status === 'loading' ? 'Memuat jadwal berdasarkan lokasi...' : 'Menampilkan jadwal default masjid'}
+          </p>
         </div>
       </div>
     </section>
