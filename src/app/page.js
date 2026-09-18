@@ -2,7 +2,6 @@
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import JADWAL_FALLBACK from '@/data/jadwal.json'
 import MITRA from '@/data/mitra.json'
 import MIMBAR_JUMAT from '@/data/mimbar-jumat.json'
 import PENGURUS from '@/data/pengurus.json'
@@ -76,13 +75,13 @@ function Navbar({ onDonasi }) {
     return () => window.removeEventListener('scroll', fn)
   }, [])
 
-  const MENU = ['Beranda','Jadwal','Tentang','Layanan','Berita','Galeri','Lokasi']
+  const MENU = ['Beranda','Tentang','Layanan','Berita','Galeri','Lokasi']
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || menuOpen ? 'bg-[#0d3d2b]/95 backdrop-blur shadow-lg' : 'bg-[#0d3d2b]/40 backdrop-blur-md'}`}>
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Image src="/logo.png" alt="Logo Masjid Lathifah" width={44} height={44} className="rounded-full" />
+          <Image src="/logo.png" alt="Logo Masjid Lathifah" width={44} height={44} loading="eager" className="rounded-full" />
           <div>
             <p className="text-white font-bold text-sm leading-tight">Masjid Lathifah</p>
             <p className="text-[#c9a84c] text-xs">DKM Lathifah</p>
@@ -119,7 +118,7 @@ function Navbar({ onDonasi }) {
         </button>
       </div>
 
-      <div className={`lg:hidden overflow-hidden transition-all duration-300 ${menuOpen ? 'max-h-96' : 'max-h-0'}`}>
+      <div className={`lg:hidden overflow-hidden transition-all duration-300 ${menuOpen ? 'max-h-[calc(100vh-5rem)] overflow-y-auto' : 'max-h-0'}`}>
         <div className="px-6 pb-4 flex flex-col gap-1">
           {MENU.map(m => (
             <a key={m} href={`#${m.toLowerCase()}`}
@@ -138,162 +137,7 @@ function Navbar({ onDonasi }) {
   )
 }
 
-function SectionJadwal() {
-  const [jam, setJam] = useState('')
-  const [tanggal, setTanggal] = useState('')
-  const [timings, setTimings] = useState(null)
-  const [hijri, setHijri] = useState(null)
-  const [status, setStatus] = useState('loading')
-  const [nextInfo, setNextInfo] = useState(null)
-
-  useEffect(() => {
-    const tick = () => {
-      const now = new Date()
-      setJam(now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }))
-      setTanggal(now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }))
-    }
-    tick()
-    const id = setInterval(tick, 1000)
-    return () => clearInterval(id)
-  }, [])
-
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      queueMicrotask(() => setStatus('denied'))
-      return
-    }
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        try {
-          const { latitude, longitude } = pos.coords
-          const today = new Date()
-          const dateStr = `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`
-          const res = await fetch(`https://api.aladhan.com/v1/timings/${dateStr}?latitude=${latitude}&longitude=${longitude}&method=20`)
-          const json = await res.json()
-          const t = json.data.timings
-          setTimings({
-            Subuh: t.Fajr,
-            Dzuhur: t.Dhuhr,
-            Ashar: t.Asr,
-            Maghrib: t.Maghrib,
-            Isya: t.Isha,
-          })
-          setHijri(json.data.date.hijri)
-          setStatus('ok')
-        } catch (e) {
-          setStatus('error')
-        }
-      },
-      () => setStatus('denied'),
-      { timeout: 8000 }
-    )
-  }, [])
-
-  useEffect(() => {
-    const sumber = timings || Object.fromEntries(JADWAL_FALLBACK.map(j => [j.nama, j.waktu.replace('.', ':')]))
-    const urutan = ['Subuh', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya']
-
-    const hitung = () => {
-      const now = new Date()
-      let target = null
-      let nama = null
-      for (const n of urutan) {
-        const [h, m] = sumber[n].split(':').map(Number)
-        const waktu = new Date(now)
-        waktu.setHours(h, m, 0, 0)
-        if (waktu > now) {
-          target = waktu
-          nama = n
-          break
-        }
-      }
-      if (!target) {
-        const [h, m] = sumber['Subuh'].split(':').map(Number)
-        target = new Date(now)
-        target.setDate(target.getDate() + 1)
-        target.setHours(h, m, 0, 0)
-        nama = 'Subuh'
-      }
-      const diff = target - now
-      setNextInfo({
-        nama,
-        jamSisa: Math.floor(diff / 3600000),
-        menitSisa: Math.floor((diff % 3600000) / 60000),
-        detikSisa: Math.floor((diff % 60000) / 1000),
-      })
-    }
-
-    hitung()
-    const id = setInterval(hitung, 1000)
-    return () => clearInterval(id)
-  }, [timings])
-
-  const dataTampil = timings
-    ? Object.entries(timings).map(([nama, waktu]) => ({ nama, waktu: waktu.replace(':', '.') }))
-    : JADWAL_FALLBACK
-
-  return (
-    <section id="jadwal" className="relative bg-[#0d3d2b] py-16 px-6 overflow-hidden">
-      <IslamicPattern className="inset-0 text-[#c9a84c] opacity-[0.04]" />
-      <div className="max-w-6xl mx-auto relative">
-        <Reveal>
-          <div className="text-center mb-6">
-            <p className="text-[#c9a84c] text-sm uppercase tracking-widest mb-2">Waktu Ibadah</p>
-            <h2 className="text-white text-3xl font-bold mb-2">Jadwal Sholat Hari Ini</h2>
-            <p className="text-white/50 text-sm">
-              {tanggal} — <span className="text-[#c9a84c] font-mono">{jam}</span>
-            </p>
-            {hijri && (
-              <p className="text-white/40 text-xs mt-1">
-                {hijri.day} {hijri.month.en} {hijri.year} H
-              </p>
-            )}
-            {status === 'denied' && (
-              <p className="text-yellow-400/70 text-xs mt-2">
-                Lokasi tidak diizinkan — menampilkan jadwal default. Izinkan akses lokasi untuk jadwal akurat sesuai posisi Anda.
-              </p>
-            )}
-            {status === 'error' && (
-              <p className="text-yellow-400/70 text-xs mt-2">
-                Gagal mengambil jadwal online — menampilkan jadwal default.
-              </p>
-            )}
-          </div>
-
-          {nextInfo && (
-            <div className="text-center mb-8">
-              <p className="text-white/60 text-xs uppercase tracking-widest mb-1">Menuju {nextInfo.nama}</p>
-              <p className="text-[#c9a84c] font-mono text-2xl font-bold">
-                {String(nextInfo.jamSisa).padStart(2, '0')}:{String(nextInfo.menitSisa).padStart(2, '0')}:{String(nextInfo.detikSisa).padStart(2, '0')}
-              </p>
-            </div>
-          )}
-        </Reveal>
-
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-          {dataTampil.map((j, i) => {
-            const aktif = nextInfo && nextInfo.nama === j.nama
-            return (
-              <Reveal key={j.nama} delay={i * 80}>
-                <div
-                  className={`rounded-2xl py-6 text-center border transition-all duration-300 hover:-translate-y-1 ${
-                    aktif
-                      ? 'bg-[#c9a84c]/20 border-[#c9a84c] shadow-lg shadow-[#c9a84c]/20'
-                      : 'bg-white/5 border-[#c9a84c]/20 hover:border-[#c9a84c]/50 hover:bg-white/10'
-                  }`}>
-                  <p className="text-white/60 text-xs uppercase tracking-widest mb-2">{j.nama}</p>
-                  <p className="text-white font-bold text-xl">{j.waktu}</p>
-                  <p className="text-[#c9a84c] text-xs mt-1">WIB</p>
-                </div>
-              </Reveal>
-            )
-          })}
-        </div>
-      </div>
-    </section>
-  )
-}
-
+ 
 function DonasiOverlay({ onClose }) {
   return (
     <div className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
@@ -570,8 +414,8 @@ export default function Home() {
                 <a href="#tentang" className="bg-[#c9a84c] hover:bg-[#b8963e] text-white font-semibold px-6 py-3 rounded-full shadow-lg shadow-[#c9a84c]/30 hover:shadow-xl hover:shadow-[#c9a84c]/40 hover:scale-105 transition-all duration-300">
                   Kenal Masjid
                 </a>
-                <a href="#jadwal" className="border border-white/40 hover:border-white hover:bg-white/10 text-white font-semibold px-5 sm:px-6 py-3 rounded-full backdrop-blur-sm hover:scale-105 transition-all duration-300 text-center">
-                  Lihat Jadwal Sholat
+                <a href="#tentang" className="border border-white/40 hover:border-white hover:bg-white/10 text-white font-semibold px-5 sm:px-6 py-3 rounded-full backdrop-blur-sm hover:scale-105 transition-all duration-300 text-center">
+                  Kenal Masjid
                 </a>
               </div>
             </Reveal>
@@ -691,7 +535,6 @@ export default function Home() {
       </section>
 
       {/* ── JADWAL SHOLAT ── */}
-      <SectionJadwal />
 
       {/* ── PENGURUS DKM ── */}
       <SectionPengurus />
@@ -753,7 +596,7 @@ export default function Home() {
           </div>
           <div>
             <p className="font-semibold mb-3 text-[#c9a84c]">Menu</p>
-            {['Beranda','Jadwal','Tentang','Layanan','Berita','Galeri','Lokasi'].map(m => (
+            {['Beranda','Tentang','Layanan','Berita','Galeri','Lokasi'].map(m => (
               <a key={m} href={`#${m.toLowerCase()}`}
                  className="block text-white/60 hover:text-white text-sm mb-1 transition-colors">{m}</a>
             ))}
