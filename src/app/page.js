@@ -189,15 +189,18 @@ function SectionJadwal() {
   const [status, setStatus] = useState('loading')
 
   useEffect(() => {
-    setNow(new Date())
+    const initialUpdate = setTimeout(() => setNow(new Date()), 0)
     const id = setInterval(() => setNow(new Date()), 1000)
-    return () => clearInterval(id)
+    return () => {
+      clearTimeout(initialUpdate)
+      clearInterval(id)
+    }
   }, [])
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      setStatus('fallback')
-      return
+      const fallbackUpdate = setTimeout(() => setStatus('fallback'), 0)
+      return () => clearTimeout(fallbackUpdate)
     }
 
     navigator.geolocation.getCurrentPosition(
