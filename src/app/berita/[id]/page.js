@@ -6,7 +6,7 @@ import {client} from '@/sanity/lib/client'
 import {beritaByIdQuery} from '@/sanity/lib/queries'
 
 const WARNA_KATEGORI = {
-  'BERITA':     'bg-[#0d3d2b] text-white',
+  'BERITA':     'bg-[#2f9e6f] text-white',
   'KEGIATAN':   'bg-[#c9a84c] text-white',
   'PENGUMUMAN': 'bg-blue-600 text-white',
   'SOSIAL':     'bg-rose-500 text-white',
@@ -36,11 +36,11 @@ export default async function DetailBeritaPage({ params }) {
 
       {/* ── HEADER ── */}
       <div className="bg-[#0d3d2b] pt-24 pb-10 px-6">
-        <div className="max-w-3xl mx-auto">
-          <Link href="/berita" className="text-[#c9a84c] text-sm hover:underline mb-4 inline-block">
+        <div className="max-w-3xl mx-auto flex flex-col items-start gap-4">
+          <Link href="/berita" className="text-[#c9a84c] text-sm hover:underline">
             ← Kembali ke Berita
           </Link>
-          <span className={`text-xs font-bold px-3 py-1 rounded-full inline-block mb-4 ${WARNA_KATEGORI[berita.kategori] || 'bg-gray-600 text-white'}`}>
+          <span className={`text-xs font-bold px-3 py-1 rounded-full inline-block ${WARNA_KATEGORI[berita.kategori] || 'bg-gray-600 text-white'}`}>
             {berita.kategori}
           </span>
           <h1 className="text-white text-3xl md:text-4xl font-bold leading-tight">{berita.judul}</h1>
@@ -63,11 +63,6 @@ export default async function DetailBeritaPage({ params }) {
           ))}
         </div>
 
-        <div className="mt-10 pt-6 border-t border-gray-100">
-          <Link href="/berita" className="text-[#0d3d2b] text-sm font-semibold hover:text-[#c9a84c] transition-colors">
-            ← Semua Berita
-          </Link>
-        </div>
       </div>
 
       {/* ── FOOTER MINI ── */}

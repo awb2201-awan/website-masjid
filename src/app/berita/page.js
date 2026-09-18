@@ -6,7 +6,7 @@ import Link from 'next/link'
 import SEMUA_BERITA from '@/data/berita.json'
 
 const WARNA_KATEGORI = {
-  'BERITA':       'bg-[#0d3d2b] text-white',
+  'BERITA':       'bg-[#2f9e6f] text-white',
   'KEGIATAN':     'bg-[#c9a84c] text-white',
   'PENGUMUMAN':   'bg-blue-600 text-white',
   'SOSIAL':       'bg-rose-500 text-white',
