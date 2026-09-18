@@ -9,10 +9,10 @@ import PENGURUS from '@/data/pengurus.json'
 import BERITA_ALL from '@/data/berita.json'
 
 const LAYANAN = [
-  { icon: '🕌', judul: 'Sholat Berjamaah',  desc: 'Lima waktu setiap hari, terbuka untuk seluruh jamaah.' },
-  { icon: '📖', judul: 'Kajian & Pengajian', desc: 'Rutin setiap pekan, berbagai tema ilmu agama.' },
-  { icon: '👶', judul: 'TPA / TPQ',          desc: 'Bimbingan Al-Qur\'an untuk anak-anak di lingkungan masjid.' },
-  { icon: '❤️', judul: 'Sosial & Zakat',     desc: 'Pengelolaan zakat, infaq, sedekah, dan santunan dhuafa.' },
+  { icon: 'mosque', judul: 'Sholat Berjamaah',  desc: 'Lima waktu setiap hari, terbuka untuk seluruh jamaah.' },
+  { icon: 'book', judul: 'Kajian & Pengajian', desc: 'Rutin setiap pekan, berbagai tema ilmu agama.' },
+  { icon: 'child', judul: 'TPA / TPQ',          desc: 'Bimbingan Al-Qur\'an untuk anak-anak di lingkungan masjid.' },
+  { icon: 'heart', judul: 'Sosial & Zakat',     desc: 'Pengelolaan zakat, infaq, sedekah, dan santunan dhuafa.' },
 ]
 
 const GOOGLE_MAPS_URL = 'https://maps.app.goo.gl/4qac5V8LgmyhVQk87'
@@ -48,6 +48,19 @@ const JADWAL_NAMES = ['Subuh', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya']
 function normalizeWaktu(waktu) {
   const match = String(waktu || '').match(/(\d{1,2})[:.](\d{2})/)
   return match ? `${match[1].padStart(2, '0')}:${match[2]}` : '--:--'
+}
+
+function FeatureIcon({ name, className = 'h-6 w-6' }) {
+  const paths = {
+    mosque: <><path d="M4 20h16M6 20v-7h12v7M4 13l8-7 8 7M9 20v-4h6v4M12 3v3" /><path d="M3 13h18" /></>,
+    book: <><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z" /><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M8 7h8M8 11h6" /></>,
+    child: <><circle cx="12" cy="7" r="3" /><path d="M6 21v-3.5a6 6 0 0 1 12 0V21M8 14h8M4 21h16" /></>,
+    heart: <path d="M20.8 8.8c0 5.2-8.8 10.2-8.8 10.2S3.2 14 3.2 8.8A4.8 4.8 0 0 1 12 6.1a4.8 4.8 0 0 1 8.8 2.7Z" />,
+    calendar: <><rect x="3" y="4.5" width="18" height="17" rx="2" /><path d="M16 2.5v4M8 2.5v4M3 9h18M8 13h.01M12 13h.01M16 13h.01M8 17h.01M12 17h.01" /></>,
+    newspaper: <><path d="M4 4h16v16H4zM8 8h8M8 12h8M8 16h5" /><path d="M6 4v16" /></>,
+    phone: <path d="M6.5 3.5 9 3l2 5-2.5 1.7a15 15 0 0 0 5.3 5.3l1.7-2.5 5 2-.5 2.5a2.5 2.5 0 0 1-2.7 2A16.5 16.5 0 0 1 4.5 6.2a2.5 2.5 0 0 1 2-2.7Z" />,
+  }
+  return <svg aria-hidden="true" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{paths[name] || paths.mosque}</svg>
 }
 
 /* ── HELPER: animasi muncul pas discroll ── */
@@ -285,13 +298,13 @@ function DonasiOverlay({ onClose }) {
       <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl"
            onClick={e => e.stopPropagation()}>
         <div className="w-12 h-12 rounded-full bg-[#0d3d2b] flex items-center justify-center mx-auto mb-4">
-          <span className="text-[#c9a84c] text-xl">🕌</span>
+          <FeatureIcon name="mosque" className="h-6 w-6 text-[#c9a84c]" />
         </div>
         <h3 className="text-[#0d3d2b] font-bold text-xl mb-1">Infaq & Sedekah</h3>
         <p className="text-gray-500 text-sm mb-5">Scan QRIS di bawah untuk berdonasi</p>
         <div className="bg-gray-100 rounded-2xl h-52 flex items-center justify-center mb-5">
           <div className="text-center">
-            <p className="text-4xl mb-2">📱</p>
+            <FeatureIcon name="phone" className="mx-auto mb-2 h-10 w-10 text-gray-400" />
             <p className="text-gray-400 text-sm">Gambar QRIS</p>
             <p className="text-gray-300 text-xs">Taruh file qris.png di /public</p>
           </div>
@@ -567,15 +580,15 @@ export default function Home() {
       <section className="bg-white py-8 px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { icon: '🕌', judul: 'Tentang Masjid', sub: 'Profil & informasi', href: '#tentang' },
-            { icon: '📅', judul: 'Kegiatan',        sub: 'Agenda & program',   href: '#layanan' },
-            { icon: '📰', judul: 'Berita',           sub: 'Info terkini',       href: '#berita' },
+            { icon: 'mosque', judul: 'Tentang Masjid', sub: 'Profil & informasi', href: '#tentang' },
+            { icon: 'calendar', judul: 'Kegiatan',        sub: 'Agenda & program',   href: '#layanan' },
+            { icon: 'newspaper', judul: 'Berita',           sub: 'Info terkini',       href: '#berita' },
           ].map((item, i) => (
             <Reveal key={item.judul} delay={i * 100}>
               <a href={item.href}
                  className="flex items-center gap-4 p-4 border border-gray-100 rounded-2xl hover:border-[#c9a84c]/40 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group">
                 <div className="w-10 h-10 rounded-xl bg-[#0d3d2b]/10 flex items-center justify-center text-xl flex-shrink-0 group-hover:bg-[#c9a84c]/20 transition-colors">
-                  {item.icon}
+                  <FeatureIcon name={item.icon} className="h-5 w-5 text-[#0d3d2b]" />
                 </div>
                 <div className="flex-1">
                   <p className="font-semibold text-[#0d3d2b] text-sm">{item.judul}</p>
@@ -631,7 +644,7 @@ export default function Home() {
             {LAYANAN.map((l, i) => (
               <Reveal key={l.judul} delay={i * 100}>
                 <div className="p-6 bg-white border border-gray-100 rounded-2xl hover:border-[#c9a84c]/40 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                  <div className="text-3xl mb-4">{l.icon}</div>
+                  <div className="mb-4 text-[#0d3d2b]"><FeatureIcon name={l.icon} className="h-8 w-8" /></div>
                   <h3 className="font-bold text-[#0d3d2b] mb-2">{l.judul}</h3>
                   <p className="text-gray-500 text-sm leading-relaxed">{l.desc}</p>
                 </div>
