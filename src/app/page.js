@@ -123,8 +123,10 @@ function Navbar({ onDonasi }) {
 
   const MENU = ['Beranda','Jadwal','Tentang','Layanan','Berita','Galeri','Lokasi']
 
+  const mobileMenuId = 'mobile-navigation'
+
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || menuOpen ? 'bg-[#0d3d2b]/95 backdrop-blur shadow-lg' : 'bg-[#0d3d2b]/40 backdrop-blur-md'}`}>
+    <nav aria-label="Navigasi utama" className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || menuOpen ? 'bg-[#0d3d2b]/95 backdrop-blur shadow-lg' : 'bg-[#0d3d2b]/40 backdrop-blur-md'}`}>
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Image src="/logo.png" alt="Logo Masjid Lathifah" width={44} height={44} loading="eager" className="rounded-full" />
@@ -137,20 +139,23 @@ function Navbar({ onDonasi }) {
         <div className="hidden lg:flex items-center gap-8">
           {MENU.map(m => (
             <a key={m} href={`#${m.toLowerCase()}`}
-               className="text-white/100 hover:text-[#c9a84c] text-lg font-medium transition-colors">
+               className="text-white/100 hover:text-[#c9a84c] text-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a84c] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d3d2b] rounded-full">
               {m}
             </a>
           ))}
-          <button onClick={onDonasi}
-            className="bg-[#c9a84c] hover:bg-[#b8963e] text-white text-sm font-semibold px-5 py-2 rounded-full shadow-lg shadow-[#c9a84c]/20 hover:shadow-xl hover:shadow-[#c9a84c]/30 hover:scale-105 transition-all duration-300">
+          <button type="button" onClick={onDonasi}
+            className="bg-[#c9a84c] hover:bg-[#b8963e] text-white text-sm font-semibold px-5 py-2 rounded-full shadow-lg shadow-[#c9a84c]/20 hover:shadow-xl hover:shadow-[#c9a84c]/30 hover:scale-105 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d3d2b]">
             Donasi
           </button>
         </div>
 
         <button
+          type="button"
           onClick={() => setMenuOpen(!menuOpen)}
-          className="lg:hidden text-white p-2"
-          aria-label="Buka menu"
+          className="lg:hidden text-white p-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a84c] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d3d2b]"
+          aria-label={menuOpen ? 'Tutup menu' : 'Buka menu'}
+          aria-expanded={menuOpen}
+          aria-controls={mobileMenuId}
         >
           {menuOpen ? (
             <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -164,17 +169,17 @@ function Navbar({ onDonasi }) {
         </button>
       </div>
 
-      <div className={`lg:hidden overflow-hidden transition-all duration-300 ${menuOpen ? 'max-h-[calc(100vh-5rem)] overflow-y-auto' : 'max-h-0'}`}>
+      <div id={mobileMenuId} className={`lg:hidden overflow-hidden transition-all duration-300 ${menuOpen ? 'max-h-[calc(100vh-5rem)] overflow-y-auto' : 'max-h-0'}`}>
         <div className="px-6 pb-4 flex flex-col gap-1">
           {MENU.map(m => (
             <a key={m} href={`#${m.toLowerCase()}`}
                onClick={() => setMenuOpen(false)}
-               className="text-white/90 hover:text-[#c9a84c] text-base font-medium py-2.5 border-b border-white/10 transition-colors">
+               className="text-white/90 hover:text-[#c9a84c] text-base font-medium py-2.5 border-b border-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a84c] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d3d2b] rounded-md">
               {m}
             </a>
           ))}
-          <button onClick={() => { onDonasi(); setMenuOpen(false) }}
-            className="bg-[#c9a84c] hover:bg-[#b8963e] text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-colors mt-3">
+          <button type="button" onClick={() => { onDonasi(); setMenuOpen(false) }}
+            className="bg-[#c9a84c] hover:bg-[#b8963e] text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-colors mt-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d3d2b]">
             Donasi
           </button>
         </div>
@@ -355,7 +360,7 @@ function DonasiOverlay({ onClose }) {
           </div>
         </div>
         <p className="text-xs text-gray-400 mb-4">Jazakumullah khairan atas kebaikan Bapak/Ibu</p>
-        <button onClick={onClose}
+        <button type="button" onClick={onClose}
           className="w-full bg-[#0d3d2b] hover:bg-[#0a2e21] text-white font-semibold py-3 rounded-xl transition-colors">
           Tutup
         </button>
@@ -582,6 +587,10 @@ export default function Home() {
 
   return (
     <>
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:text-[#0d3d2b] focus:shadow-lg">
+        Lewati ke konten utama
+      </a>
+
       <style>{`
         @keyframes marquee {
           0%   { transform: translateX(0); }
@@ -592,6 +601,7 @@ export default function Home() {
       <Navbar onDonasi={() => setShowDonasi(true)} />
       {showDonasi && <DonasiOverlay onClose={() => setShowDonasi(false)} />}
 
+      <main id="main-content" className="overflow-x-hidden">
       {/* ── HERO ── */}
       <section id="beranda" className="relative min-h-screen flex items-center">
         <Image src="/hero-bg.jpg" alt="Masjid Lathifah" fill className="object-cover object-center" priority />
@@ -771,6 +781,8 @@ export default function Home() {
       </section>
 
       {/* ── FOOTER ── */}
+      </main>
+
       <footer className="bg-[#0d3d2b] text-white py-12 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-8">
           <div>

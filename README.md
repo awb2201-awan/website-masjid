@@ -34,3 +34,15 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+### Repository deployment settings
+
+This repository includes [`vercel.json`](./vercel.json). When importing it into Vercel:
+
+1. Select this repository.
+2. Keep the project **Root Directory** as `.` because this repository is already the website project root.
+3. Keep the detected Next.js framework.
+4. Add the same public Sanity environment variables used locally in `.env.local`.
+5. Deploy. Future pushes to the configured production branch will trigger a new deployment.
+
+Do not add Sanity write tokens to this project. The public site only needs read-only configuration.
