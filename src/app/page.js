@@ -289,15 +289,15 @@ function SectionJadwal() {
           <div className="absolute bottom-14 left-0 right-0 h-16" style={{ background: dramatis ? 'linear-gradient(to top, rgba(240,100,30,.7), transparent)' : 'linear-gradient(to top, rgba(10,10,40,.2), transparent)' }} />
           <div className="absolute rounded-full transition-[left,top] duration-[6000ms]" style={{ left: `${sunLeft}%`, top: `${sunTop}%`, transform: 'translate(-50%, -50%)', ...celestialStyle }} />
           <svg className="absolute bottom-0 left-0 h-[45%] w-full" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
-            <rect x="0" y="270" width="1200" height="30" fill="rgba(0,0,0,.75)" />
-            <path d="M0 270 Q100 220 200 240 Q300 255 400 235 Q500 215 600 230 Q700 245 800 225 Q900 205 1000 230 Q1100 250 1200 235 L1200 300 L0 300Z" fill="rgba(0,0,0,.75)" />
-            <rect x="160" y="160" width="12" height="115" fill="rgba(0,0,0,.75)" /><polygon points="166,145 158,162 174,162" fill="rgba(0,0,0,.75)" /><circle cx="166" cy="141" r="4" fill="#c9a84c" />
-            <rect x="1028" y="160" width="12" height="115" fill="rgba(0,0,0,.75)" /><polygon points="1034,145 1026,162 1042,162" fill="rgba(0,0,0,.75)" /><circle cx="1034" cy="141" r="4" fill="#c9a84c" />
-            <rect x="340" y="200" width="520" height="105" fill="rgba(0,0,0,.75)" />
-            <rect x="355" y="130" width="22" height="175" fill="rgba(0,0,0,.75)" /><polygon points="366,112 353,132 379,132" fill="rgba(0,0,0,.75)" /><circle cx="366" cy="107" r="6" fill="#c9a84c" />
-            <rect x="823" y="130" width="22" height="175" fill="rgba(0,0,0,.75)" /><polygon points="834,112 821,132 847,132" fill="rgba(0,0,0,.75)" /><circle cx="834" cy="107" r="6" fill="#c9a84c" />
-            <ellipse cx="460" cy="200" rx="65" ry="44" fill="rgba(0,0,0,.75)" /><ellipse cx="740" cy="200" rx="65" ry="44" fill="rgba(0,0,0,.75)" /><ellipse cx="600" cy="175" rx="100" ry="70" fill="rgba(0,0,0,.75)" />
-            <path d="M594 112a16 16 0 1 1 12 0" stroke="#c9a84c" strokeWidth="3" fill="none" /><circle cx="608" cy="107" r="3" fill="#c9a84c" />
+            <rect x="0" y="266" width="1200" height="34" fill="rgba(0,0,0,.86)" />
+            <path d="M0 270 Q100 214 200 238 Q300 254 400 230 Q500 208 600 226 Q700 242 800 220 Q900 198 1000 226 Q1100 246 1200 231 L1200 300 L0 300Z" fill="rgba(0,0,0,.86)" />
+            <rect x="157" y="155" width="18" height="120" fill="rgba(0,0,0,.86)" /><polygon points="166,139 155,160 177,160" fill="rgba(0,0,0,.86)" /><circle cx="166" cy="134" r="5" fill="#c9a84c" />
+            <rect x="1025" y="155" width="18" height="120" fill="rgba(0,0,0,.86)" /><polygon points="1034,139 1023,160 1045,160" fill="rgba(0,0,0,.86)" /><circle cx="1034" cy="134" r="5" fill="#c9a84c" />
+            <rect x="334" y="196" width="532" height="109" fill="rgba(0,0,0,.86)" />
+            <rect x="351" y="125" width="30" height="180" fill="rgba(0,0,0,.86)" /><polygon points="366,105 350,130 382,130" fill="rgba(0,0,0,.86)" /><circle cx="366" cy="99" r="7" fill="#c9a84c" />
+            <rect x="819" y="125" width="30" height="180" fill="rgba(0,0,0,.86)" /><polygon points="834,105 818,130 850,130" fill="rgba(0,0,0,.86)" /><circle cx="834" cy="99" r="7" fill="#c9a84c" />
+            <ellipse cx="460" cy="198" rx="70" ry="48" fill="rgba(0,0,0,.86)" /><ellipse cx="740" cy="198" rx="70" ry="48" fill="rgba(0,0,0,.86)" /><ellipse cx="600" cy="172" rx="108" ry="76" fill="rgba(0,0,0,.86)" />
+            <path d="M592 108a19 19 0 1 1 16 0" stroke="#c9a84c" strokeWidth="4" fill="none" /><circle cx="608" cy="101" r="4" fill="#c9a84c" />
           </svg>
         </div>
         <div className="bg-[#0d3d2b] p-[clamp(14px,4vw,22px)] lg:flex lg:flex-col lg:justify-center lg:p-10">
