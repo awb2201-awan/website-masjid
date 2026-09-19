@@ -7,6 +7,8 @@ import MITRA from '@/data/mitra.json'
 import MIMBAR_JUMAT from '@/data/mimbar-jumat.json'
 import PENGURUS from '@/data/pengurus.json'
 import BERITA_ALL from '@/data/berita.json'
+import DataStatus from '@/components/data-status'
+import {useSanityData} from '@/hooks/use-sanity-data'
 
 const LAYANAN = [
   { icon: 'mosque', judul: 'Sholat Berjamaah',  desc: 'Lima waktu setiap hari, terbuka untuk seluruh jamaah.' },
@@ -370,16 +372,7 @@ function DonasiOverlay({ onClose }) {
 }
 
 function SectionMimbarJumat() {
-  const [mimbar, setMimbar] = useState(MIMBAR_JUMAT)
-
-  useEffect(() => {
-    fetch('/api/mimbar-jumat')
-      .then((response) => response.ok ? response.json() : [])
-      .then((items) => {
-        if (items.length > 0) setMimbar(items)
-      })
-      .catch(() => {})
-  }, [])
+  const {data: mimbar, isLoading, hasError} = useSanityData('/api/mimbar-jumat', MIMBAR_JUMAT)
 
   return (
     <section id="mimbar-jumat" className="relative bg-white py-20 px-6 overflow-hidden">
@@ -388,6 +381,7 @@ function SectionMimbarJumat() {
         <Reveal>
           <p className="text-[#c9a84c] text-sm uppercase tracking-widest mb-2">Khutbah Jumat</p>
           <h2 className="text-[#0d3d2b] text-3xl font-bold mb-10">Mimbar Jumat</h2>
+          <DataStatus isLoading={isLoading} hasError={hasError} />
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {mimbar.map((m, i) => (
@@ -424,16 +418,7 @@ function SectionMimbarJumat() {
 }
 
 function SectionPengurus() {
-  const [pengurus, setPengurus] = useState(PENGURUS)
-
-  useEffect(() => {
-    fetch('/api/pengurus')
-      .then((response) => response.ok ? response.json() : [])
-      .then((pengurusSanity) => {
-        if (pengurusSanity.length > 0) setPengurus(pengurusSanity)
-      })
-      .catch(() => {})
-  }, [])
+  const {data: pengurus, isLoading, hasError} = useSanityData('/api/pengurus', PENGURUS)
 
   return (
     <section id="pengurus" className="relative bg-gray-50 py-20 px-6 overflow-hidden">
@@ -442,6 +427,7 @@ function SectionPengurus() {
         <Reveal>
           <p className="text-[#c9a84c] text-sm uppercase tracking-widest mb-2">Struktur Organisasi</p>
           <h2 className="text-[#0d3d2b] text-3xl font-bold mb-10">Pengurus DKM Lathifah</h2>
+          <DataStatus isLoading={isLoading} hasError={hasError} />
         </Reveal>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
           {pengurus.map((p, i) => (
@@ -449,7 +435,7 @@ function SectionPengurus() {
               <div className="text-center group">
                 <div className="relative w-24 h-24 mx-auto rounded-full bg-[#0d3d2b] flex items-center justify-center mb-4 border-4 border-white shadow-md group-hover:shadow-xl group-hover:border-[#c9a84c]/40 group-hover:-translate-y-1 transition-all duration-300 overflow-hidden">
                   {p.foto ? (
-                    <Image src={p.foto} alt={p.nama} fill unoptimized className="object-cover" />
+                    <Image src={p.foto} alt={p.nama} fill className="object-cover" />
                   ) : (
                     <span className="text-[#c9a84c] font-extrabold text-xl">{p.inisial}</span>
                   )}
@@ -466,16 +452,7 @@ function SectionPengurus() {
 }
 
 function SectionBerita() {
-  const [semuaBerita, setSemuaBerita] = useState(BERITA_ALL)
-
-  useEffect(() => {
-    fetch('/api/berita')
-      .then((response) => response.ok ? response.json() : [])
-      .then((beritaSanity) => {
-        if (beritaSanity.length > 0) setSemuaBerita(beritaSanity)
-      })
-      .catch(() => {})
-  }, [])
+  const {data: semuaBerita, isLoading, hasError} = useSanityData('/api/berita', BERITA_ALL)
 
   const featured = semuaBerita[0]
   const smalls   = semuaBerita.slice(1, 4)
@@ -488,6 +465,7 @@ function SectionBerita() {
             <div>
               <p className="text-[#c9a84c] text-sm uppercase tracking-widest mb-2">Informasi</p>
               <h2 className="text-[#0d3d2b] text-3xl font-bold">Berita Terbaru</h2>
+              <DataStatus isLoading={isLoading} hasError={hasError} />
             </div>
             <Link href="/berita" className="text-[#0d3d2b] text-sm font-semibold hover:text-[#c9a84c] transition-colors">
               Semua Berita →
@@ -499,7 +477,7 @@ function SectionBerita() {
           {featured && (
             <Reveal>
               <div className="lg:col-span-2 relative rounded-2xl overflow-hidden h-80 group cursor-pointer shadow-md hover:shadow-2xl transition-shadow duration-300">
-                <Image src={featured.img} alt={featured.judul} fill sizes="(min-width: 1024px) 66vw, 100vw" unoptimized={featured.img.startsWith('http')} className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Image src={featured.img} alt={featured.judul} fill sizes="(min-width: 1024px) 66vw, 100vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-6">
                   <span className="bg-[#c9a84c] text-white text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">
@@ -516,7 +494,7 @@ function SectionBerita() {
             {smalls.map((b, i) => (
               <Reveal key={b.id} delay={i * 100}>
                 <div className="relative rounded-2xl overflow-hidden h-[calc((320px-16px)/3)] group cursor-pointer shadow-sm hover:shadow-lg transition-shadow duration-300">
-                  <Image src={b.img} alt={b.judul} fill sizes="(min-width: 1024px) 33vw, 100vw" unoptimized={b.img.startsWith('http')} className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <Image src={b.img} alt={b.judul} fill sizes="(min-width: 1024px) 33vw, 100vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 p-4">
                     <span className="bg-[#c9a84c] text-white text-[10px] font-bold px-2 py-0.5 rounded-full mb-1 inline-block">
@@ -535,21 +513,13 @@ function SectionBerita() {
 }
 
 function SectionMitra() {
-  const [mitra, setMitra] = useState(MITRA)
-
-  useEffect(() => {
-    fetch('/api/mitra')
-      .then((response) => response.ok ? response.json() : [])
-      .then((items) => {
-        if (items.length > 0) setMitra(items)
-      })
-      .catch(() => {})
-  }, [])
+  const {data: mitra, isLoading, hasError} = useSanityData('/api/mitra', MITRA)
 
   return (
     <section className="bg-gray-50 py-12 px-6 overflow-hidden">
       <div className="max-w-6xl mx-auto mb-6 text-center">
         <p className="text-[#0d3d2b]/40 text-xs uppercase tracking-widest font-bold">Mitra & Kolaborasi</p>
+        <DataStatus isLoading={isLoading} hasError={hasError} />
       </div>
       <div className="relative">
         <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-gray-50 to-transparent z-10" />
@@ -570,20 +540,11 @@ function SectionMitra() {
 
 export default function Home() {
   const [showDonasi, setShowDonasi] = useState(false)
-  const [galeri, setGaleri] = useState([
+  const {data: galeri, isLoading: galeriLoading, hasError: galeriError} = useSanityData('/api/galeri', [
     {id: 'hero', judul: 'Masjid Lathifah', img: '/hero-bg.jpg'},
     {id: 'masjid-2', judul: 'Masjid Lathifah', img: '/masjid-2.jpg'},
     {id: 'masjid-3', judul: 'Masjid Lathifah', img: '/masjid-3.jpg'},
   ])
-
-  useEffect(() => {
-    fetch('/api/galeri')
-      .then((response) => response.ok ? response.json() : [])
-      .then((galeriSanity) => {
-        if (galeriSanity.length > 0) setGaleri(galeriSanity)
-      })
-      .catch(() => {})
-  }, [])
 
   return (
     <>
@@ -734,12 +695,13 @@ export default function Home() {
             {galeri.slice(0, 3).map((item, i) => (
               <Reveal key={item.id} delay={i * 100}>
                 <div className="relative h-56 rounded-2xl overflow-hidden group shadow-sm hover:shadow-xl transition-shadow duration-300">
-                  <Image src={item.img} alt={item.judul || `Foto masjid ${i+1}`} fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" unoptimized={item.img.startsWith('http')} className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <Image src={item.img} alt={item.judul || `Foto masjid ${i+1}`} fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
               </Reveal>
             ))}
           </div>
         </div>
+        <DataStatus isLoading={galeriLoading} hasError={galeriError} />
       </section>
 
       {/* ── JADWAL SHOLAT ── */}

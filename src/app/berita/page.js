@@ -1,9 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import {useState} from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import SEMUA_BERITA from '@/data/berita.json'
+import DataStatus from '@/components/data-status'
+import {useSanityData} from '@/hooks/use-sanity-data'
 
 const WARNA_KATEGORI = {
   'BERITA':       'bg-[#2f9e6f] text-white',
@@ -16,16 +18,7 @@ const KATEGORI_LIST = ['Semua', 'Berita', 'Kegiatan', 'Pengumuman', 'Sosial']
 
 export default function BeritaPage() {
   const [filterAktif, setFilterAktif] = useState('Semua')
-  const [semuaBerita, setSemuaBerita] = useState(SEMUA_BERITA)
-
-  useEffect(() => {
-    fetch('/api/berita')
-      .then((response) => response.ok ? response.json() : [])
-      .then((beritaSanity) => {
-        if (beritaSanity.length > 0) setSemuaBerita(beritaSanity)
-      })
-      .catch(() => {})
-  }, [])
+  const {data: semuaBerita, isLoading, hasError} = useSanityData('/api/berita', SEMUA_BERITA)
 
   const beritaTampil = filterAktif === 'Semua'
     ? semuaBerita
@@ -67,6 +60,7 @@ export default function BeritaPage() {
 
       {/* ── LIST BERITA ── */}
       <div className="max-w-6xl mx-auto px-6 py-12">
+        <DataStatus isLoading={isLoading} hasError={hasError} />
         {beritaTampil.length === 0 ? (
           <p className="text-center text-gray-400 py-12">Belum ada berita di kategori ini.</p>
         ) : (
@@ -77,7 +71,6 @@ export default function BeritaPage() {
                 {/* Gambar */}
                 <div className="relative h-48 overflow-hidden">
                   <Image src={b.img} alt={b.judul} fill sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                    unoptimized={b.img.startsWith('http')}
                     className="object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute top-3 left-3">
                     <span className={`text-xs font-bold px-3 py-1 rounded-full ${WARNA_KATEGORI[b.kategori] || 'bg-gray-600 text-white'}`}>

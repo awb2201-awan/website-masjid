@@ -51,7 +51,7 @@ export default async function DetailBeritaPage({ params }) {
       {/* ── GAMBAR ── */}
       <div className="max-w-3xl mx-auto px-6 -mt-6">
         <div className="relative h-64 md:h-96 rounded-2xl overflow-hidden shadow-lg">
-          <Image src={berita.img} alt={berita.judul} fill sizes="(min-width: 768px) 768px, 100vw" unoptimized={berita.img.startsWith('http')} className="object-cover" />
+          <Image src={berita.img} alt={berita.judul} fill sizes="(min-width: 768px) 768px, 100vw" className="object-cover" />
         </div>
       </div>
 

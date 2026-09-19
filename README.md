@@ -1,48 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Website Masjid Lathifah
 
-## Getting Started
+Website publik Masjid Lathifah untuk informasi ibadah, kegiatan, berita, galeri, pengurus, mitra, dan lokasi masjid.
 
-First, run the development server:
+## Arsitektur
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Website publik:** Next.js App Router di repository ini.
+- **CMS:** Sanity sebagai sumber data read-only.
+- **Admin:** Sanity Studio berada di repository terpisah [`website-masjid-admin`](../website-masjid-admin).
+- **Keamanan:** Website publik tidak memiliki Sanity write token dan tidak menyediakan route untuk membuat, mengubah, atau menghapus konten.
+
+## Menjalankan lokal
+
+Persyaratan:
+
+- Node.js dan npm
+- Environment variable Sanity publik
+
+Buat `.env.local` di root project:
+
+```env
+NEXT_PUBLIC_SANITY_PROJECT_ID=o1zkx52x
+NEXT_PUBLIC_SANITY_DATASET=production
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Install dan jalankan:
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```powershell
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Buka `http://localhost:3000`.
 
-## Learn More
+Perintah yang tersedia:
 
-To learn more about Next.js, take a look at the following resources:
+```powershell
+npm run lint
+npm run build
+npm run start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Data dan fallback
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Konten utama dibaca melalui route API berikut:
 
-## Deploy on Vercel
+- `/api/berita`
+- `/api/galeri`
+- `/api/mimbar-jumat`
+- `/api/mitra`
+- `/api/pengurus`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Jika Sanity tidak tersedia, halaman tetap menggunakan data lokal dari `src/data`. UI menampilkan status ketika data terbaru sedang dimuat atau gagal disinkronkan.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Route publik
 
-### Repository deployment settings
+- `/` — beranda
+- `/berita` — daftar berita dan filter kategori
+- `/berita/[id]` — detail berita
+- `/galeri` — galeri foto
+- `/robots.txt` — aturan crawler
+- `/sitemap.xml` — sitemap publik
 
-This repository includes [`vercel.json`](./vercel.json). When importing it into Vercel:
+Route `/studio` tidak tersedia di website publik. Semua pengelolaan konten dilakukan melalui project admin terpisah.
 
-1. Select this repository.
-2. Keep the project **Root Directory** as `.` because this repository is already the website project root.
-3. Keep the detected Next.js framework.
-4. Add the same public Sanity environment variables used locally in `.env.local`.
-5. Deploy. Future pushes to the configured production branch will trigger a new deployment.
+## Deployment Vercel
 
-Do not add Sanity write tokens to this project. The public site only needs read-only configuration.
+Import repository ini sebagai project Next.js dengan root directory `.`. Set environment variable berikut pada Vercel:
+
+```env
+NEXT_PUBLIC_SANITY_PROJECT_ID=o1zkx52x
+NEXT_PUBLIC_SANITY_DATASET=production
+```
+
+Jangan menambahkan Sanity write token ke website publik. Setelah deployment, verifikasi:
+
+- halaman utama dan halaman berita dapat dibuka;
+- `/robots.txt` dan `/sitemap.xml` merespons;
+- `/studio` merespons `404`;
+- API publik hanya menerima operasi baca.
+
+## Optimasi gambar
+
+Gambar lokal dan gambar dari `cdn.sanity.io` dirender dengan `next/image`. Host Sanity sudah dibatasi di `next.config.mjs`, sehingga Next.js dapat mengoptimalkan ukuran dan format gambar sesuai viewport.
+
+## Struktur penting
+
+```text
+src/app/              Route dan halaman Next.js
+src/app/api/          API read-only untuk data Sanity
+src/data/              Data fallback lokal
+src/hooks/             Hook sinkronisasi data client
+src/components/       Komponen UI bersama
+src/sanity/            Client, query, dan environment Sanity
+public/               Asset lokal website
+```
+
+## Admin dan perubahan konten
+
+Gunakan project [`website-masjid-admin`](../website-masjid-admin) untuk login ke Sanity Studio, mengedit dokumen, mengunggah gambar, dan mempublikasikan konten. Atur role Sanity dengan prinsip least privilege dan jangan menyimpan credential admin di repository publik.

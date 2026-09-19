@@ -1,8 +1,9 @@
 'use client'
 
-import {useEffect, useState} from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import DataStatus from '@/components/data-status'
+import {useSanityData} from '@/hooks/use-sanity-data'
 
 const FALLBACK_GALERI = [
   {id: 'hero', judul: 'Masjid Lathifah', deskripsi: 'Dokumentasi Masjid Lathifah.', img: '/hero-bg.jpg'},
@@ -11,16 +12,7 @@ const FALLBACK_GALERI = [
 ]
 
 export default function GaleriPage() {
-  const [galeri, setGaleri] = useState(FALLBACK_GALERI)
-
-  useEffect(() => {
-    fetch('/api/galeri')
-      .then((response) => response.ok ? response.json() : [])
-      .then((items) => {
-        if (items.length > 0) setGaleri(items)
-      })
-      .catch(() => {})
-  }, [])
+  const {data: galeri, isLoading, hasError} = useSanityData('/api/galeri', FALLBACK_GALERI)
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -36,6 +28,7 @@ export default function GaleriPage() {
       </header>
 
       <section className="max-w-6xl mx-auto px-6 py-12">
+        <DataStatus isLoading={isLoading} hasError={hasError} />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {galeri.map((item, index) => (
             <article key={item.id} className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-shadow duration-300">
@@ -45,7 +38,6 @@ export default function GaleriPage() {
                   alt={item.judul}
                   fill
                   sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                  unoptimized={item.img.startsWith('http')}
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 {index === 0 && (
