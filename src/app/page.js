@@ -344,25 +344,42 @@ function SectionJadwal() {
 }
 
 function DonasiOverlay({ onClose }) {
+  const closeButtonRef = useRef(null)
+
+  useEffect(() => {
+    closeButtonRef.current?.focus()
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
+
   return (
     <div className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
-         onClick={onClose}>
+         onClick={onClose}
+         role="presentation">
       <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl"
-           onClick={e => e.stopPropagation()}>
+           onClick={e => e.stopPropagation()}
+           role="dialog"
+           aria-modal="true"
+           aria-labelledby="donation-title"
+           tabIndex="-1">
         <div className="w-12 h-12 rounded-full bg-[#0d3d2b] flex items-center justify-center mx-auto mb-4">
           <FeatureIcon name="mosque" className="h-6 w-6 text-[#c9a84c]" />
         </div>
-        <h3 className="text-[#0d3d2b] font-bold text-xl mb-1">Infaq & Sedekah</h3>
+        <h2 id="donation-title" className="text-[#0d3d2b] font-bold text-xl mb-1">Infaq & Sedekah</h2>
         <p className="text-gray-500 text-sm mb-5">Scan QRIS di bawah untuk berdonasi</p>
         <div className="bg-gray-100 rounded-2xl h-52 flex items-center justify-center mb-5">
           <div className="text-center">
             <FeatureIcon name="phone" className="mx-auto mb-2 h-10 w-10 text-gray-400" />
-            <p className="text-gray-400 text-sm">Gambar QRIS</p>
-            <p className="text-gray-300 text-xs">Taruh file qris.png di /public</p>
+            <p className="text-gray-600 text-sm">Gambar QRIS</p>
+            <p className="text-gray-500 text-xs">Taruh file qris.png di /public</p>
           </div>
         </div>
-        <p className="text-xs text-gray-400 mb-4">Jazakumullah khairan atas kebaikan Bapak/Ibu</p>
+        <p className="text-xs text-gray-600 mb-4">Jazakumullah khairan atas kebaikan Bapak/Ibu</p>
         <button type="button" onClick={onClose}
+          ref={closeButtonRef}
           className="w-full bg-[#0d3d2b] hover:bg-[#0a2e21] text-white font-semibold py-3 rounded-xl transition-colors">
           Tutup
         </button>
@@ -573,8 +590,10 @@ export default function Home() {
             <Reveal>
               <p className="text-[#c9a84c] text-sm tracking-widest uppercase mb-3">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
               <p className="text-white/60 text-sm tracking-widest uppercase mb-4">Selamat Datang di</p>
-              <h1 className="text-white text-5xl lg:text-7xl font-extrabold leading-tight mb-2">Masjid</h1>
-              <h1 className="text-[#c9a84c] text-5xl lg:text-7xl font-extrabold leading-tight mb-6">Lathifah</h1>
+              <h1 className="text-5xl lg:text-7xl font-extrabold leading-tight mb-6">
+                <span className="block text-white">Masjid</span>
+                <span className="block text-[#c9a84c]">Lathifah</span>
+              </h1>
               <p className="text-white/70 text-base max-w-md leading-relaxed mb-8">
                 Ruang digital untuk mengenal masjid, melihat jadwal ibadah, serta mengikuti
                 informasi dan kegiatan Masjid Lathifah.

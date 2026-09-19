@@ -35,17 +35,19 @@ export default function BeritaPage() {
           </Link>
           <p className="text-[#c9a84c] text-sm uppercase tracking-widest mb-2">Informasi</p>
           <h1 className="text-white text-4xl font-bold">Berita & Pengumuman</h1>
-          <p className="text-white/50 text-sm mt-2">Info terkini dari Masjid Lathifah</p>
+          <p className="text-white/80 text-sm mt-2">Info terkini dari Masjid Lathifah</p>
         </div>
       </div>
 
       {/* ── FILTER KATEGORI ── */}
       <div className="bg-white border-b border-gray-100 px-6 py-4 sticky top-0 z-10 shadow-sm">
-        <div className="max-w-6xl mx-auto flex gap-3 flex-wrap">
+        <div className="max-w-6xl mx-auto flex gap-3 flex-wrap" role="group" aria-label="Filter kategori berita">
           {KATEGORI_LIST.map(k => (
             <button
               key={k}
               onClick={() => setFilterAktif(k)}
+              type="button"
+              aria-pressed={filterAktif === k}
               className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-colors cursor-pointer ${
                 filterAktif === k
                   ? 'bg-[#0d3d2b] text-white border-[#0d3d2b]'
@@ -62,7 +64,7 @@ export default function BeritaPage() {
       <div className="max-w-6xl mx-auto px-6 py-12">
         <DataStatus isLoading={isLoading} hasError={hasError} />
         {beritaTampil.length === 0 ? (
-          <p className="text-center text-gray-400 py-12">Belum ada berita di kategori ini.</p>
+          <p className="text-center text-gray-600 py-12">Belum ada berita di kategori ini.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {beritaTampil.map(b => (
@@ -80,7 +82,7 @@ export default function BeritaPage() {
                 </div>
                 {/* Konten */}
                 <div className="p-5">
-                  <p className="text-gray-400 text-xs mb-2">{b.tanggal}</p>
+                  <p className="text-gray-600 text-xs mb-2">{b.tanggal}</p>
                   <h3 className="text-[#0d3d2b] font-bold text-base leading-snug mb-2 line-clamp-2">
                     {b.judul}
                   </h3>
@@ -101,7 +103,7 @@ export default function BeritaPage() {
 
       {/* ── FOOTER MINI ── */}
       <div className="bg-[#0d3d2b] py-6 px-6 text-center">
-        <p className="text-white/30 text-xs">© 2026 DKM Masjid Lathifah</p>
+        <p className="text-white/70 text-xs">© 2026 DKM Masjid Lathifah</p>
       </div>
 
     </div>

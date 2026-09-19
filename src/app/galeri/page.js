@@ -23,7 +23,7 @@ export default function GaleriPage() {
           </Link>
           <p className="text-[#c9a84c] text-sm uppercase tracking-widest mb-2">Dokumentasi</p>
           <h1 className="text-white text-4xl font-bold">Galeri Masjid</h1>
-          <p className="text-white/50 text-sm mt-2">Kumpulan foto kegiatan dan suasana Masjid Lathifah</p>
+          <p className="text-white/80 text-sm mt-2">Kumpulan foto kegiatan dan suasana Masjid Lathifah</p>
         </div>
       </header>
 
@@ -48,7 +48,7 @@ export default function GaleriPage() {
               </div>
               <div className="p-5">
                 <h2 className="text-[#0d3d2b] font-bold text-base">{item.judul}</h2>
-                <p className="text-gray-500 text-sm leading-relaxed mt-2">{item.deskripsi}</p>
+                <p className="text-gray-600 text-sm leading-relaxed mt-2">{item.deskripsi}</p>
               </div>
             </article>
           ))}
@@ -56,7 +56,7 @@ export default function GaleriPage() {
       </section>
 
       <footer className="bg-[#0d3d2b] py-6 px-6 text-center">
-        <p className="text-white/30 text-xs">© 2026 DKM Masjid Lathifah</p>
+        <p className="text-white/70 text-xs">© 2026 DKM Masjid Lathifah</p>
       </footer>
     </main>
   )

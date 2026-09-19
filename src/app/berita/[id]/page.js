@@ -44,7 +44,7 @@ export default async function DetailBeritaPage({ params }) {
             {berita.kategori}
           </span>
           <h1 className="text-white text-3xl md:text-4xl font-bold leading-tight">{berita.judul}</h1>
-          <p className="text-white/50 text-sm mt-3">{berita.tanggal}</p>
+          <p className="text-white/80 text-sm mt-3">{berita.tanggal}</p>
         </div>
       </div>
 
@@ -59,7 +59,7 @@ export default async function DetailBeritaPage({ params }) {
       <div className="max-w-3xl mx-auto px-6 py-10">
         <div className="prose max-w-none">
           {paragraf.map((p, i) => (
-            <p key={i} className="text-gray-600 leading-relaxed mb-4">{p}</p>
+            <p key={i} className="text-gray-700 leading-relaxed mb-4">{p}</p>
           ))}
         </div>
 
@@ -67,7 +67,7 @@ export default async function DetailBeritaPage({ params }) {
 
       {/* ── FOOTER MINI ── */}
       <div className="bg-[#0d3d2b] py-6 px-6 text-center">
-        <p className="text-white/30 text-xs">© 2026 DKM Masjid Lathifah</p>
+        <p className="text-white/70 text-xs">© 2026 DKM Masjid Lathifah</p>
       </div>
 
     </div>
